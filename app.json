@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "29d6b87a-ec8f-450c-9a39-b98956d58028"
+      }
+    },
+    "owner": "sumitcode"
   }
 }
