@@ -16,20 +16,44 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createProduct } from '../services/api';
 
-const CATEGORIES = ['Tech', 'Furniture', 'Books', 'Clothing', 'Beauty', 'Sports'];
+const CATEGORIES = ['Books', 'Electronics', 'Hostel', 'Notes', 'Other'];
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair'];
 
-const SellItemScreen = ({ navigation }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('Tech');
-  const [condition, setCondition] = useState('Good');
-  const [priceType, setPriceType] = useState('fixed'); // 'fixed' or 'bid'
+const SellItemScreen = ({ navigation, route }) => {
+  const existingProduct = route.params?.product;
+
+  const [title, setTitle] = useState(existingProduct?.title || '');
+  const [description, setDescription] = useState(existingProduct?.description || '');
+  const [price, setPrice] = useState(existingProduct?.price?.toString() || '');
+  const [category, setCategory] = useState(existingProduct?.category || 'Books');
+  const [condition, setCondition] = useState(existingProduct?.condition || 'Good');
+  const [priceType, setPriceType] = useState(existingProduct?.price_type || 'fixed'); // 'fixed' or 'bid'
   const [image, setImage] = useState(null);
+  const [pickupLocation, setPickupLocation] = useState(existingProduct?.pickup_location || '');
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    loadUserDefaultPickup();
+  }, []);
+
+  const loadUserDefaultPickup = async () => {
+    try {
+      if (existingProduct?.pickup_location) {
+        setPickupLocation(existingProduct.pickup_location);
+        return;
+      }
+      const userStr = await AsyncStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        setPickupLocation(user.pickup_location || 'Campus Main Library');
+      }
+    } catch (e) {
+      console.error('Error loading user data', e);
+    }
+  };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -46,7 +70,7 @@ const SellItemScreen = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    if (!title || !price || !category || !image) {
+    if (!title || !price || !category || (!image && !existingProduct?.image_url)) {
       Alert.alert('Error', 'Please fill in all required fields and add an image.');
       return;
     }
@@ -60,16 +84,31 @@ const SellItemScreen = ({ navigation }) => {
         price_type: priceType,
         category,
         condition,
-        image_data: `data:image/jpeg;base64,${image.base64}`,
+        pickup_location: pickupLocation,
       };
 
-      await createProduct(productData);
-      Alert.alert('Success', 'Your item has been listed!', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+      if (image?.base64) {
+        productData.image_data = `data:image/jpeg;base64,${image.base64}`;
+      } else if (existingProduct?.image_url) {
+        productData.image_url = existingProduct.image_url;
+      }
+
+      const { createProduct, updateProduct } = require('../services/api');
+      
+      if (existingProduct) {
+        await updateProduct(existingProduct.id, productData);
+        Alert.alert('Success', 'Your item has been updated!', [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        await createProduct(productData);
+        Alert.alert('Success', 'Your item has been listed!', [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', error.message || 'Failed to list item. Please try again.');
+      Alert.alert('Error', error.message || 'Failed to process item. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -85,7 +124,7 @@ const SellItemScreen = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={28} color="#0b0f10" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Sell Item</Text>
+          <Text style={styles.headerTitle}>{existingProduct ? 'Edit Item' : 'Sell Item'}</Text>
           <View style={{ width: 28 }} />
         </View>
 
@@ -94,6 +133,8 @@ const SellItemScreen = ({ navigation }) => {
           <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
             {image ? (
               <Image source={{ uri: image.uri }} style={styles.previewImage} />
+            ) : existingProduct?.image_url ? (
+              <Image source={{ uri: require('../services/api').getFullImageUrl(existingProduct.image_url) }} style={styles.previewImage} />
             ) : (
               <View style={styles.placeholderContainer}>
                 <Ionicons name="camera-outline" size={40} color="#abadaf" />
@@ -176,6 +217,17 @@ const SellItemScreen = ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </View>
+
+            <Text style={styles.label}>Pickup Location *</Text>
+            <View style={styles.pickupInputContainer}>
+              <Ionicons name="location-outline" size={20} color="#abadaf" style={{ marginRight: 10 }} />
+              <TextInput
+                style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                placeholder="Where to meet?"
+                value={pickupLocation}
+                onChangeText={setPickupLocation}
+              />
+            </View>
           </View>
         </ScrollView>
 
@@ -190,7 +242,7 @@ const SellItemScreen = ({ navigation }) => {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.submitButtonText}>List Item</Text>
+                <Text style={styles.submitButtonText}>{existingProduct ? 'Update Item' : 'List Item'}</Text>
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -264,6 +316,15 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     color: '#0b0f10',
+    borderWidth: 1,
+    borderColor: '#eef1f3',
+  },
+  pickupInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f7f9',
+    borderRadius: 12,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: '#eef1f3',
   },

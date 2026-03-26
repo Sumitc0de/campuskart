@@ -5,6 +5,10 @@ import SignupScreen from '../screens/SignupScreen';
 import MainTabNavigator from './MainTabNavigator';
 import SellItemScreen from '../screens/SellItemScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
+import SellerProfileScreen from '../screens/SellerProfileScreen';
+import MessageDetailScreen from '../screens/MessageDetailScreen';
+import BidDetailsScreen from '../screens/BidDetailsScreen';
+import ManageListingsScreen from '../screens/ManageListingsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +36,22 @@ const AppNavigator = () => {
       <Stack.Screen 
         name="ProductDetail" 
         component={ProductDetailScreen} 
+      />
+      <Stack.Screen 
+        name="SellerProfile" 
+        component={SellerProfileScreen} 
+      />
+      <Stack.Screen 
+        name="MessageDetail" 
+        component={MessageDetailScreen} 
+      />
+      <Stack.Screen 
+        name="BidDetails" 
+        component={BidDetailsScreen} 
+      />
+      <Stack.Screen 
+        name="ManageListings" 
+        component={ManageListingsScreen} 
       />
     </Stack.Navigator>
   );

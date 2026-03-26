@@ -54,45 +54,83 @@ exports.getMessages = async (req, res) => {
 exports.sendMessage = async (req, res) => {
   try {
     const senderId = req.user.id;
-    const { productId, sellerId, text, chatId: existingChatId } = req.body;
+    const { productId, sellerId, text, chatId: existingChatId, image_data } = req.body;
 
     let chatId = existingChatId;
 
-    // If starting a new thread from "Ask for best price"
+    // If starting a new thread
     if (!chatId && productId && sellerId) {
-      if (senderId == sellerId) {
-        return res.status(400).json({ message: 'You cannot message yourself' });
-      }
-
       // Check if chat already exists
-      let checkSql = 'SELECT id FROM chats WHERE buyer_id = $1 AND product_id = $2';
-      let checkParams = [senderId, productId];
+      let checkSql = 'SELECT id FROM chats WHERE product_id = $1 AND ((buyer_id = $2 AND seller_id = $3) OR (buyer_id = $3 AND seller_id = $2))';
+      let checkParams = [productId, senderId, sellerId];
       if (dbType !== 'postgres') {
-        checkSql = checkSql.replace('$1', '?').replace('$2', '?');
+        checkSql = 'SELECT id FROM chats WHERE product_id = ? AND ((buyer_id = ? AND seller_id = ?) OR (buyer_id = ? AND seller_id = ?))';
+        checkParams = [productId, senderId, sellerId, sellerId, senderId];
       }
       const existing = await query(checkSql, checkParams);
 
       if (existing.length > 0) {
         chatId = existing[0].id;
       } else {
-        // Create new chat
+        const productRows = await query('SELECT user_id FROM products WHERE id = $1', [productId]);
+        const actualSellerId = productRows.length > 0 ? productRows[0].user_id : sellerId;
+        const actualBuyerId = senderId === actualSellerId ? sellerId : senderId;
+
         let createChatSql = 'INSERT INTO chats (buyer_id, seller_id, product_id) VALUES ($1, $2, $3) RETURNING id';
-        let createChatParams = [senderId, sellerId, productId];
+        let createChatParams = [actualBuyerId, actualSellerId, productId];
         if (dbType !== 'postgres') {
           createChatSql = 'INSERT INTO chats (buyer_id, seller_id, product_id) VALUES (?, ?, ?)';
         }
         const newChat = await query(createChatSql, createChatParams);
-        chatId = newChat[0].id;
+        chatId = newChat.insertId || (newChat[0] ? newChat[0].id : null);
       }
     }
 
     if (!chatId) return res.status(400).json({ message: 'Missing chat context' });
 
-    // Insert message
-    let sql = 'INSERT INTO messages (chat_id, sender_id, text) VALUES ($1, $2, $3) RETURNING *';
-    let params = [chatId, senderId, text];
+    let imageUrl = null;
+    
+    // Handle base64 image data for messages
+    if (image_data) {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const crypto = require('crypto');
+        
+        let base64Data = image_data;
+        let ext = 'jpg';
+        
+        if (image_data.startsWith('data:image')) {
+          const matches = image_data.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+          if (matches && matches.length === 3) {
+            ext = matches[1];
+            base64Data = matches[2];
+          }
+        }
+        
+        if (ext === 'jpeg') ext = 'jpg';
+        
+        const fileName = `${crypto.randomUUID()}.${ext}`;
+        const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+        
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        const filePath = path.join(uploadsDir, fileName);
+        fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
+        
+        imageUrl = `/uploads/${fileName}`;
+      } catch (uploadError) {
+        console.error('Error saving message image:', uploadError);
+      }
+    }
+
+    // Insert message with optional image_url
+    let sql = 'INSERT INTO messages (chat_id, sender_id, text, image_url) VALUES ($1, $2, $3, $4) RETURNING *';
+    let params = [chatId, senderId, text || null, imageUrl];
     if (dbType !== 'postgres') {
-      sql = 'INSERT INTO messages (chat_id, sender_id, text) VALUES (?, ?, ?)';
+      sql = 'INSERT INTO messages (chat_id, sender_id, text, image_url) VALUES (?, ?, ?, ?)';
     }
 
     const message = await query(sql, params);

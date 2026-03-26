@@ -34,7 +34,8 @@ async function createTables() {
       ADD COLUMN IF NOT EXISTS rating DECIMAL(2,1) DEFAULT 5.0,
       ADD COLUMN IF NOT EXISTS department VARCHAR(255),
       ADD COLUMN IF NOT EXISTS student_year VARCHAR(50),
-      ADD COLUMN IF NOT EXISTS batch VARCHAR(50);
+      ADD COLUMN IF NOT EXISTS batch VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS pickup_location VARCHAR(255) DEFAULT 'Campus Main Library';
     `);
     console.log('✅ Users table profile fields verified');
 
@@ -87,6 +88,34 @@ async function createTables() {
       );
     `);
     console.log('✅ Messages table created');
+
+    // 6. Create Bids Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bids (
+        id SERIAL PRIMARY KEY,
+        product_id INT REFERENCES products(id) ON DELETE CASCADE,
+        buyer_id INT REFERENCES users(id) ON DELETE CASCADE,
+        amount DECIMAL(10,2) NOT NULL,
+        status VARCHAR(50) DEFAULT 'PENDING',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Bids table created');
+
+    // 7. Create Notifications Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(100) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        data JSONB,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Notifications table created');
 
     console.log('🎉 Database initialization complete!');
   } catch (error) {

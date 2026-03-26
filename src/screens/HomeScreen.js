@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,84 +13,18 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { getProducts, getFullImageUrl } from '../services/api';
 
 const { width } = Dimensions.get('window');
 
-// ─── Real Product Data ───
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: '⊞' },
   { id: 'books', label: 'Books', icon: '📚' },
   { id: 'electronics', label: 'Electronics', icon: '💻' },
   { id: 'hostel', label: 'Hostel', icon: '🏠' },
   { id: 'notes', label: 'Notes', icon: '📝' },
-];
-
-const FEATURED_PRODUCT = {
-  id: 'f1',
-  title: 'iPad Pro 12.9" (M2)\n+ Apple Pencil',
-  price: 850,
-  image: require('../../assets/ipad_pro.png'),
-  badges: ['PREMIUM', 'VERIFIED STUDENT'],
-  seller: 'Alex M.',
-  category: 'electronics',
-};
-
-const RECOMMENDED_PRODUCTS = [
-  {
-    id: 'r1',
-    title: 'Organic Chemistry',
-    price: 45,
-    condition: 'Used - Like New',
-    image: require('../../assets/chemistry_book.png'),
-    badge: 'VERIFIED STUDENT',
-    category: 'books',
-    liked: false,
-  },
-  {
-    id: 'r2',
-    title: 'Black Mini Fridge',
-    price: 30,
-    condition: 'Hostel Essential',
-    image: require('../../assets/mini_fridge.png'),
-    badge: 'VERIFIED STUDENT',
-    category: 'hostel',
-    liked: false,
-  },
-];
-
-const RECENT_DROPS = [
-  {
-    id: 'd1',
-    title: 'Mini Watch',
-    price: 20,
-    time: '2 mins ago',
-    image: require('../../assets/smart_watch.png'),
-    bgColor: '#eef1f3',
-  },
-  {
-    id: 'd2',
-    title: 'Nike Air Max',
-    price: 45,
-    time: '15 mins ago',
-    image: require('../../assets/nike_shoes.png'),
-    bgColor: '#e5e9eb',
-  },
-  {
-    id: 'd3',
-    title: 'LED Desk Lamp',
-    price: 15,
-    time: '42 mins ago',
-    image: require('../../assets/led_lamp.png'),
-    bgColor: '#ffeef4',
-  },
-  {
-    id: 'd4',
-    title: 'Audio Headphones',
-    price: 75,
-    time: '1 hr ago',
-    image: require('../../assets/smart_watch.png'), // reuse image
-    bgColor: '#eef1f3',
-  },
+  { id: 'other', label: 'Other', icon: '📦' },
 ];
 
 const HomeScreen = ({ navigation }) => {
@@ -98,10 +32,28 @@ const HomeScreen = ({ navigation }) => {
   const [userName, setUserName] = useState('Alex');
   const [searchQuery, setSearchQuery] = useState('');
   const [likedItems, setLikedItems] = useState({});
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [university, setUniversity] = useState('Campus Student');
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+      loadUserData();
+    }, [])
+  );
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await getProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching home products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadUserData = async () => {
     try {
@@ -109,6 +61,7 @@ const HomeScreen = ({ navigation }) => {
       if (userData) {
         const user = JSON.parse(userData);
         setUserName(user.name?.split(' ')[0] || 'Alex');
+        setUniversity(user.university || 'Campus Student');
       }
     } catch (e) {
       // use default name
@@ -121,6 +74,18 @@ const HomeScreen = ({ navigation }) => {
       [itemId]: !prev[itemId],
     }));
   };
+
+  const filteredProducts = products.filter(item => {
+    const matchesFilter = selectedCategory === 'all' || (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
+    const title = item.title ? item.title.toLowerCase() : '';
+    const matchesSearch = title.includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  // Split products for sections
+  const featuredProduct = filteredProducts.length > 0 ? filteredProducts[0] : null;
+  const recommendedProducts = filteredProducts.slice(1, 5);
+  const recentDrops = [...filteredProducts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 10);
 
   return (
     <View style={styles.container}>
@@ -157,7 +122,7 @@ const HomeScreen = ({ navigation }) => {
           </Text>
           <Text style={styles.greetingSubtitle}>
             Your campus marketplace at{' '}
-            <Text style={styles.universityLink}>Stanford University</Text>.
+            <Text style={styles.universityLink}>{university}</Text>.
           </Text>
         </View>
 
@@ -214,45 +179,59 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* Featured Product Card */}
-        <TouchableOpacity 
-          activeOpacity={0.9} 
-          style={styles.featuredCard}
-          onPress={() => navigation.navigate('ProductDetail', { productId: FEATURED_PRODUCT.id })}
-        >
-          <Image source={FEATURED_PRODUCT.image} style={styles.featuredImage} />
-          <LinearGradient
-            colors={['transparent', 'rgba(11, 15, 16, 0.85)']}
-            style={styles.featuredOverlay}
+        {featuredProduct && (
+          <TouchableOpacity 
+            activeOpacity={0.9} 
+            style={styles.featuredCard}
+            onPress={() => navigation.navigate('ProductDetail', { productId: featuredProduct.id })}
           >
-            <View style={styles.featuredBadges}>
-              <View style={styles.premiumBadge}>
-                <Text style={styles.premiumBadgeText}>PREMIUM</Text>
+            {featuredProduct.image_url ? (
+              <Image source={{ uri: getFullImageUrl(featuredProduct.image_url) }} style={styles.featuredImage} />
+            ) : (
+              <View style={[styles.featuredImage, { backgroundColor: '#4647d3', justifyContent: 'center', alignItems: 'center' }]}>
+                <Text style={{ fontSize: 60 }}>📦</Text>
               </View>
-              <View style={styles.verifiedBadge}>
-                <Text style={styles.verifiedBadgeText}>✓ VERIFIED STUDENT</Text>
+            )}
+            <LinearGradient
+              colors={['transparent', 'rgba(11, 15, 16, 0.85)']}
+              style={styles.featuredOverlay}
+            >
+              <View style={styles.featuredBadges}>
+                <View style={styles.premiumBadge}>
+                  <Text style={styles.premiumBadgeText}>PREMIUM</Text>
+                </View>
+                <View style={styles.verifiedBadge}>
+                  <Text style={styles.verifiedBadgeText}>✓ VERIFIED STUDENT</Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.featuredTitle}>{FEATURED_PRODUCT.title}</Text>
-            <View style={styles.featuredBottom}>
-              <Text style={styles.featuredPrice}>${FEATURED_PRODUCT.price}</Text>
-              <View style={styles.arrowButton}>
-                <Text style={styles.arrowIcon}>→</Text>
+              <Text style={styles.featuredTitle}>{featuredProduct.title}</Text>
+              <View style={styles.featuredBottom}>
+                <Text style={styles.featuredPrice}>${featuredProduct.price}</Text>
+                <View style={styles.arrowButton}>
+                  <Text style={styles.arrowIcon}>→</Text>
+                </View>
               </View>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
 
         {/* Recommended Product Cards Row */}
         <View style={styles.recommendedRow}>
-          {RECOMMENDED_PRODUCTS.map((item) => (
+          {recommendedProducts.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.productCard}
               activeOpacity={0.8}
               onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
             >
-              <View style={styles.productImageContainer}>
-                <Image source={item.image} style={styles.productImage} />
+            <View style={styles.productImageContainer}>
+                {item.image_url ? (
+                  <Image source={{ uri: getFullImageUrl(item.image_url) }} style={styles.productImage} />
+                ) : (
+                  <View style={[styles.productImage, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <Text style={{ fontSize: 30 }}>📦</Text>
+                  </View>
+                )}
                 <TouchableOpacity
                   style={styles.heartButton}
                   onPress={() => toggleLike(item.id)}
@@ -274,7 +253,7 @@ const HomeScreen = ({ navigation }) => {
               </Text>
               <View style={styles.productPriceRow}>
                 <Text style={styles.productPrice}>${item.price}</Text>
-                <Text style={styles.productCondition}>{item.condition}</Text>
+                <Text style={styles.productCondition}>{item.condition || 'Used - Like New'}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -291,7 +270,7 @@ const HomeScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.recentDropsScroll}
         >
-          {RECENT_DROPS.map((item) => (
+          {recentDrops.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.dropCard}
@@ -301,16 +280,20 @@ const HomeScreen = ({ navigation }) => {
               <View
                 style={[
                   styles.dropImageContainer,
-                  { backgroundColor: item.bgColor },
+                  { backgroundColor: item.category === 'electronics' ? '#eef1f3' : '#e5e9eb' },
                 ]}
               >
-                <Image source={item.image} style={styles.dropImage} />
+                {item.image_url ? (
+                  <Image source={{ uri: getFullImageUrl(item.image_url) }} style={styles.dropImage} />
+                ) : (
+                  <Text style={{ fontSize: 20 }}>📦</Text>
+                )}
               </View>
               <View style={styles.dropInfo}>
                 <Text style={styles.dropTitle} numberOfLines={1}>
                   {item.title}
                 </Text>
-                <Text style={styles.dropTime}>{item.time}</Text>
+                <Text style={styles.dropTime}>{item.category || 'Just now'}</Text>
               </View>
               <Text style={styles.dropPrice}>${item.price}</Text>
             </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,11 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile, updateProfile, getFullImageUrl } from '../services/api';
 
 const { width } = Dimensions.get('window');
@@ -34,10 +36,14 @@ const ProfileScreen = ({ navigation }) => {
   const [department, setDepartment] = useState('');
   const [year, setYear] = useState('');
   const [batch, setBatch] = useState('');
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [avatarImage, setAvatarImage] = useState(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   const fetchProfile = async () => {
     try {
@@ -55,6 +61,7 @@ const ProfileScreen = ({ navigation }) => {
         setDepartment(data.profile.department || '');
         setYear(data.profile.student_year || '');
         setBatch(data.profile.batch || '');
+        setPickupLocation(data.profile.pickup_location || 'Campus Main Library');
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -63,17 +70,39 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setAvatarImage(result.assets[0]);
+    }
+  };
+
   const handleUpdateProfile = async () => {
     setUpdating(true);
     try {
-      const updated = await updateProfile({
+      const profileUpdates = {
         name,
         university,
         department,
         student_year: year,
         batch,
-      });
+        pickup_location: pickupLocation,
+      };
+
+      if (avatarImage?.base64) {
+        profileUpdates.avatar_data = `data:image/jpeg;base64,${avatarImage.base64}`;
+      }
+
+      const updated = await updateProfile(profileUpdates);
       setProfileData(prev => ({ ...prev, ...updated }));
+      setAvatarImage(null);
       setEditModalVisible(false);
       Alert.alert('Success', 'Profile updated successfully! ✨');
     } catch (error) {
@@ -112,13 +141,18 @@ const ProfileScreen = ({ navigation }) => {
         
         {/* ─── Profile Header ─── */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.settingsBtn} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={22} color="#595c5e" />
-          </TouchableOpacity>
+          <View style={styles.topActions}>
+            <TouchableOpacity style={styles.actionBtn} onPress={fetchProfile}>
+              <Ionicons name="refresh-outline" size={22} color="#595c5e" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionBtn} onPress={handleLogout}>
+              <Ionicons name="log-out-outline" size={22} color="#eb4d4b" />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.avatarWrapper}>
             <Image 
-              source={{ uri: profileData.avatar || 'https://i.pravatar.cc/150?u=' + profileData.id }} 
+              source={{ uri: getFullImageUrl(profileData.avatar) || 'https://i.pravatar.cc/150?u=' + profileData.id }} 
               style={styles.avatar} 
             />
             <View style={styles.verifiedBadge}>
@@ -132,6 +166,8 @@ const ProfileScreen = ({ navigation }) => {
             {profileData.university || 'Campus Student'} • {profileData.department || 'General'}
             {'\n'}
             <Text style={styles.userBatch}>{profileData.student_year || 'Senior'} • {profileData.batch || 'Batch 2024'}</Text>
+            {'\n'}
+            <Text style={styles.userPickup}>📍 Default Pickup: {profileData.pickup_location || 'Campus Main Library'}</Text>
           </Text>
 
           {/* Stats Bar */}
@@ -140,22 +176,15 @@ const ProfileScreen = ({ navigation }) => {
               <Text style={styles.statLabel}>Active Items</Text>
               <Text style={styles.statValue}>{profileData.active_listings || 0}</Text>
             </View>
-            <View style={[styles.statItem, styles.statBorder]}>
+            <View style={[styles.statItem, { borderLeftWidth: 1, borderColor: '#f0f0f0' }]}>
               <Text style={styles.statLabel}>Items Sold</Text>
               <Text style={styles.statValue}>{profileData.items_sold || 0}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Rating</Text>
-              <View style={styles.ratingRow}>
-                <Text style={styles.statValue}>{profileData.rating || 5.0}</Text>
-                <Ionicons name="star" size={16} color="#FFD700" style={{ marginLeft: 4 }} />
-              </View>
             </View>
           </View>
 
           {/* Action Row */}
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.manageBtn}>
+            <TouchableOpacity style={styles.manageBtn} onPress={() => navigation.navigate('ManageListings')}>
               <LinearGradient colors={['#4647d3', '#6264f6']} style={styles.gradientBtn}>
                 <Text style={styles.manageBtnText}>Manage Listings</Text>
               </LinearGradient>
@@ -190,7 +219,13 @@ const ProfileScreen = ({ navigation }) => {
                    onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
                 >
                   <View style={styles.imageContainer}>
-                    <Image source={{ uri: getFullImageUrl(item.image_url) }} style={styles.listingImage} />
+                    {item.image_url ? (
+                      <Image source={{ uri: getFullImageUrl(item.image_url) }} style={styles.listingImage} />
+                    ) : (
+                      <View style={[styles.listingImage, { backgroundColor: '#f5f7f9', justifyContent: 'center', alignItems: 'center' }]}>
+                        <Text style={{ fontSize: 30 }}>📦</Text>
+                      </View>
+                    )}
                     <View style={styles.catBadge}>
                       <Text style={styles.catText}>{item.category || 'USED'}</Text>
                     </View>
@@ -224,6 +259,20 @@ const ProfileScreen = ({ navigation }) => {
           </View>
 
           <ScrollView style={styles.modalForm} showsVerticalScrollIndicator={false}>
+            {/* Avatar Section */}
+            <View style={styles.avatarEditContainer}>
+              <TouchableOpacity onPress={pickImage} style={styles.avatarEditWrapper}>
+                <Image 
+                  source={{ uri: avatarImage ? avatarImage.uri : (getFullImageUrl(profileData.avatar) || 'https://i.pravatar.cc/150?u=' + profileData.id) }} 
+                  style={styles.avatarEdit} 
+                />
+                <View style={styles.editBadge}>
+                  <Ionicons name="camera" size={16} color="#ffffff" />
+                </View>
+              </TouchableOpacity>
+              <Text style={styles.avatarEditLabel}>Change Profile Photo</Text>
+            </View>
+
             {/* Form Inputs */}
             <View style={styles.formGroup}>
               <Text style={styles.formLabel}>FULL NAME</Text>
@@ -250,6 +299,11 @@ const ProfileScreen = ({ navigation }) => {
               <Text style={styles.formLabel}>BATCH</Text>
               <TextInput style={styles.formInput} value={batch} onChangeText={setBatch} placeholder="e.g. 2021-2025" />
             </View>
+            
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>DEFAULT PICKUP LOCATION</Text>
+              <TextInput style={styles.formInput} value={pickupLocation} onChangeText={setPickupLocation} placeholder="e.g. Main Library" />
+            </View>
 
             <View style={styles.tipBox}>
               <Ionicons name="information-circle-outline" size={20} color="#4647d3" />
@@ -267,14 +321,28 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#ffffff' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: { alignItems: 'center', paddingHorizontal: 24, paddingTop: 10, paddingBottom: 30 },
-  settingsBtn: { alignSelf: 'flex-end', width: 44, height: 44, borderRadius: 22, backgroundColor: '#f5f7f9', justifyContent: 'center', alignItems: 'center' },
+  topActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 0,
+  },
+  actionBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#f5f7f9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   avatarWrapper: { position: 'relative', marginTop: 10, marginBottom: 16 },
   avatar: { width: 110, height: 110, borderRadius: 55, borderWidth: 4, borderColor: '#ffffff', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10 },
   verifiedBadge: { position: 'absolute', bottom: -5, alignSelf: 'center', backgroundColor: '#22c55e', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, borderWidth: 2, borderColor: '#ffffff', gap: 4 },
   verifiedText: { color: '#ffffff', fontSize: 10, fontWeight: '800', letterSpacing: 0.5 },
   userName: { fontSize: 26, fontWeight: '800', color: '#0b0f10', marginBottom: 4 },
-  userMeta: { fontSize: 14, color: '#4647d3', fontWeight: '600', textAlign: 'center', lineHeight: 20 },
+  userMeta: { fontSize: 13, color: '#4647d3', fontWeight: '600', textAlign: 'center', lineHeight: 18 },
   userBatch: { color: '#595c5e', fontWeight: '500' },
+  userPickup: { color: '#abadaf', fontSize: 11, fontWeight: '500' },
   statsBar: { flexDirection: 'row', backgroundColor: '#ffffff', marginTop: 24, borderRadius: 20, paddingVertical: 14, shadowColor: '#2c2f31', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 4, width: '100%', borderWidth: 1, borderColor: '#f5f7f9' },
   statItem: { flex: 1, alignItems: 'center' },
   statBorder: { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#f0f0f0' },
@@ -314,7 +382,12 @@ const styles = StyleSheet.create({
   formInput: { backgroundColor: '#f5f7f9', height: 52, borderRadius: 12, paddingHorizontal: 16, fontSize: 14, color: '#0b0f10', fontWeight: '600' },
   row: { flexDirection: 'row' },
   tipBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f4f1ff', padding: 16, borderRadius: 14, marginTop: 10, gap: 12 },
-  tipText: { flex: 1, color: '#4647d3', fontSize: 12, fontWeight: '600', lineHeight: 18 }
+  tipText: { flex: 1, color: '#4647d3', fontSize: 12, fontWeight: '600', lineHeight: 18 },
+  avatarEditContainer: { alignItems: 'center', marginBottom: 30 },
+  avatarEditWrapper: { position: 'relative' },
+  avatarEdit: { width: 100, height: 100, borderRadius: 50, backgroundColor: '#f5f7f9' },
+  editBadge: { position: 'absolute', bottom: 0, right: 0, backgroundColor: '#4647d3', width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderColor: '#ffffff' },
+  avatarEditLabel: { marginTop: 12, fontSize: 13, fontWeight: '700', color: '#4647d3' }
 });
 
 export default ProfileScreen;

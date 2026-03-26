@@ -9,7 +9,7 @@ const User = {
   findByEmail: async (email) => {
     let sql;
     if (dbType === 'postgres') {
-      sql = 'SELECT * FROM users WHERE email = $1';
+      sql = 'SELECT id, name, email, password, university, department, student_year, batch, pickup_location, is_verified, created_at FROM users WHERE email = $1';
     } else {
       sql = 'SELECT * FROM users WHERE email = ?';
     }
@@ -28,15 +28,15 @@ const User = {
   create: async (name, email, hashedPassword, university, department, student_year, batch) => {
     let sql;
     if (dbType === 'postgres') {
-      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
-             RETURNING id, name, email, university, department, student_year, batch, is_verified, created_at`;
+      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             RETURNING id, name, email, university, department, student_year, batch, pickup_location, is_verified, created_at`;
     } else {
-      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`;
+      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     }
 
-    const result = await query(sql, [name, email, hashedPassword, university, department, student_year, batch]);
+    const result = await query(sql, [name, email, hashedPassword, university, department, student_year, batch, pickup_location || 'Campus Main Library']);
 
     if (dbType === 'postgres') {
       return result[0];
@@ -62,9 +62,9 @@ const User = {
   findById: async (id) => {
     let sql;
     if (dbType === 'postgres') {
-      sql = 'SELECT id, name, email, college, is_verified, created_at FROM users WHERE id = $1';
+      sql = 'SELECT id, name, email, university, department, student_year, batch, pickup_location, avatar, rating, active_listings, items_sold, is_verified, created_at FROM users WHERE id = $1';
     } else {
-      sql = 'SELECT id, name, email, college, is_verified, created_at FROM users WHERE id = ?';
+      sql = 'SELECT * FROM users WHERE id = ?';
     }
     const rows = await query(sql, [id]);
     return rows.length > 0 ? rows[0] : null;

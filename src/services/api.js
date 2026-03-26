@@ -27,7 +27,7 @@ api.interceptors.request.use(
 );
 
 // ==================== AUTH ====================
-export const registerUser = async (name, email, password, university, department, student_year, batch) => {
+export const registerUser = async (name, email, password, university, department, student_year, batch, pickup_location) => {
   try {
     const response = await api.post('/api/auth/register', { 
       name, 
@@ -36,7 +36,8 @@ export const registerUser = async (name, email, password, university, department
       university,
       department,
       student_year,
-      batch
+      batch,
+      pickup_location
     });
     if (response.data.token) {
       await AsyncStorage.setItem('token', response.data.token);
@@ -83,6 +84,33 @@ export const getProductById = async (id) => {
 export const createProduct = async (productData) => {
   try {
     const response = await api.post('/api/products', productData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const updateProductStatus = async (productId, status) => {
+  try {
+    const response = await api.patch(`/api/products/${productId}/status`, { status });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await api.delete(`/api/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const updateProduct = async (productId, productData) => {
+  try {
+    const response = await api.put(`/api/products/${productId}`, productData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Network error. Please try again.' };
@@ -139,6 +167,61 @@ export const getMessages = async (chatId) => {
 export const sendMessage = async (messageData) => {
   try {
     const response = await api.post('/api/messages', messageData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+// ==================== BIDS ====================
+export const placeBid = async (productId, amount) => {
+  try {
+    const response = await api.post('/api/bids', { productId, amount });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const getProductBids = async (productId) => {
+  try {
+    const response = await api.get(`/api/bids/product/${productId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const getNotifications = async () => {
+  try {
+    const response = await api.get('/api/notifications/'); // Added trailing slash for robustness
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const pingServer = async () => {
+  try {
+    const response = await api.get('/api/ping');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Ping failed' };
+  }
+};
+
+export const markNotificationRead = async (id) => {
+  try {
+    const response = await api.put(`/api/notifications/${id}/read`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Network error. Please try again.' };
+  }
+};
+
+export const clearNotifications = async () => {
+  try {
+    const response = await api.delete('/api/notifications/all');
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Network error. Please try again.' };

@@ -23,6 +23,7 @@ const SignupScreen = ({ navigation }) => {
   const [department, setDepartment] = useState('');
   const [year, setYear] = useState('');
   const [batch, setBatch] = useState('');
+  const [pickupLocation, setPickupLocation] = useState('Campus Main Library');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,8 @@ const SignupScreen = ({ navigation }) => {
         college.trim() || 'VCET',
         department.trim(),
         year.trim(),
-        batch.trim()
+        batch.trim(),
+        pickupLocation.trim()
       );
       
       await AsyncStorage.setItem('token', data.token);
@@ -194,6 +196,20 @@ const SignupScreen = ({ navigation }) => {
                 placeholderTextColor="#abadaf"
                 value={batch}
                 onChangeText={setBatch}
+              />
+            </View>
+          </View>
+          {/* Pickup Location Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>DEFAULT PICKUP LOCATION</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputIcon}>📍</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. Main Library"
+                placeholderTextColor="#abadaf"
+                value={pickupLocation}
+                onChangeText={setPickupLocation}
               />
             </View>
           </View>

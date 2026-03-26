@@ -5,7 +5,7 @@ const { query, dbType } = require('../config/db');
 exports.getUserProfile = async (req, res) => {
   try {
     let sql = `
-      SELECT id, name, email, avatar, university, department, student_year, batch, graduation_year, active_listings, items_sold, rating, created_at 
+      SELECT id, name, email, avatar, university, department, student_year, batch, graduation_year, pickup_location, active_listings, items_sold, created_at 
       FROM users WHERE id = $1
     `;
     let params = [req.params.id];
@@ -41,7 +41,36 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { name, avatar, university, department, student_year, batch } = req.body;
+    const { name, avatar, university, department, student_year, batch, pickup_location, avatar_data } = req.body;
+
+    let finalAvatarUrl = avatar;
+
+    // Handle base64 avatar upload
+    if (avatar_data && avatar_data.startsWith('data:image')) {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const crypto = require('crypto');
+        
+        const matches = avatar_data.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+        if (matches && matches.length === 3) {
+          const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+          const base64Data = matches[2];
+          const fileName = `avatar_${crypto.randomUUID()}.${ext}`;
+          const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+          
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          
+          const filePath = path.join(uploadsDir, fileName);
+          fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
+          finalAvatarUrl = `/uploads/${fileName}`;
+        }
+      } catch (uploadError) {
+        console.error('Error saving profile avatar:', uploadError);
+      }
+    }
 
     let sql = `
       UPDATE users 
@@ -51,18 +80,17 @@ exports.updateUserProfile = async (req, res) => {
         university = COALESCE($3, university), 
         department = COALESCE($4, department),
         student_year = COALESCE($5, student_year),
-        batch = COALESCE($6, batch)
-      WHERE id = $7 
-      RETURNING id, name, email, avatar, university, department, student_year, batch, graduation_year, active_listings, items_sold, rating
+        batch = COALESCE($6, batch),
+        pickup_location = COALESCE($7, pickup_location)
+      WHERE id = $8 
+      RETURNING id, name, email, avatar, university, department, student_year, batch, graduation_year, pickup_location, active_listings, items_sold
     `;
-    let params = [name, avatar, university, department, student_year, batch, userId];
+    let params = [name, finalAvatarUrl, university, department, student_year, batch, pickup_location, userId];
 
     if (dbType !== 'postgres') {
-      // COALESCE logic for MySQL/SQLite would be different or need multiple queries, 
-      // but we assume Postgres here based on initDb.js
       sql = `
         UPDATE users SET 
-          name = ?, avatar = ?, university = ?, department = ?, student_year = ?, batch = ? 
+          name = ?, avatar = ?, university = ?, department = ?, student_year = ?, batch = ?, pickup_location = ? 
         WHERE id = ?
       `;
     }
@@ -81,7 +109,7 @@ exports.getMyProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     let sql = `
-      SELECT id, name, email, avatar, university, department, student_year, batch, graduation_year, active_listings, items_sold, rating, created_at 
+      SELECT id, name, email, avatar, university, department, student_year, batch, graduation_year, pickup_location, active_listings, items_sold, created_at 
       FROM users WHERE id = $1
     `;
     let params = [userId];

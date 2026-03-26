@@ -8,13 +8,48 @@ const path = require('path');
 // Load environment variables
 dotenv.config();
 
+const { pool } = require('./config/db');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// ─── Auto-migrate: ensure bids & notifications tables exist ───
+async function ensureTables() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS bids (
+        id SERIAL PRIMARY KEY,
+        product_id INT REFERENCES products(id) ON DELETE CASCADE,
+        buyer_id INT REFERENCES users(id) ON DELETE CASCADE,
+        amount DECIMAL(10,2) NOT NULL,
+        status VARCHAR(50) DEFAULT 'PENDING',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(100) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        data JSONB,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('✅ Bids & Notifications tables verified');
+  } catch (error) {
+    console.error('❌ Auto-migration error:', error.message);
+  }
+}
+ensureTables();
 
 // ─── 1. Logger First (To capture all attempts) ───
 app.use((req, res, next) => {
   const now = new Date().toISOString();
-  console.log(`[${now}] ${req.method} ${req.url} - Content-Length: ${req.headers['content-length'] || 0}`);
+  console.log(`[${now}] DEBUG: ${req.method} ${req.url}`);
+  console.log(`Headers: ${JSON.stringify(req.headers)}`);
   next();
 });
 
@@ -32,11 +67,18 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const bidRoutes = require('./routes/bidRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/bids', bidRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// Test route to verify routing works
+app.get('/api/ping', (req, res) => res.json({ success: true, message: 'pong' }));
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -48,6 +90,16 @@ app.get('/', (req, res) => {
       register: 'POST /api/auth/register',
       login: 'POST /api/auth/login',
     },
+  });
+});
+
+// Diagnostic endpoint to check if the server is updated
+app.get('/api/init-check', (req, res) => {
+  res.json({
+    success: true,
+    message: '🚀 CampusKart Backend is UPDATED with Bidding & Notifications!',
+    timestamp: new Date().toISOString(),
+    routes_loaded: ['bids', 'notifications', 'auth', 'products', 'users', 'messages']
   });
 });
 

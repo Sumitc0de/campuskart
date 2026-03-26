@@ -25,6 +25,7 @@ const CATEGORIES = [
   { id: 'electronics', label: 'Electronics', icon: '💻' },
   { id: 'hostel', label: 'Hostel', icon: '🏠' },
   { id: 'notes', label: 'Notes', icon: '📝' },
+  { id: 'other', label: 'Other', icon: '📦' },
 ];
 
 const ListingsScreen = ({ navigation }) => {
@@ -159,10 +160,16 @@ const ListingsScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
               >
                 <View style={styles.imageContainer}>
-                  <Image 
-                    source={{ uri: getFullImageUrl(item.image_url) }} 
-                    style={styles.listingImage} 
-                  />
+                  {item.image_url ? (
+                    <Image 
+                      source={{ uri: getFullImageUrl(item.image_url) }} 
+                      style={styles.listingImage} 
+                    />
+                  ) : (
+                    <View style={[styles.listingImage, { backgroundColor: '#f5f7f9', justifyContent: 'center', alignItems: 'center' }]}>
+                      <Text style={{ fontSize: 40 }}>📦</Text>
+                    </View>
+                  )}
                   <View style={styles.categoryBadge}>
                     <Text style={styles.categoryBadgeText}>{item.category || 'OTHER'}</Text>
                   </View>
@@ -175,6 +182,12 @@ const ListingsScreen = ({ navigation }) => {
                   <Text style={styles.listingTitle} numberOfLines={1}>{item.title}</Text>
                   <View style={styles.priceContainer}>
                     <Text style={styles.listingPrice}>${item.price}</Text>
+                    {item.price_type === 'bid' && (
+                      <View style={styles.bidBadgeSmall}>
+                        <Ionicons name="stats-chart" size={10} color="#fff" />
+                        <Text style={styles.bidBadgeTextSmall}>BID</Text>
+                      </View>
+                    )}
                     <View style={styles.verifiedDotMini}>
                       <Ionicons name="checkmark" size={8} color="#fff" />
                     </View>
@@ -391,7 +404,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#22C55E',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  bidBadgeSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4647d3',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    gap: 3,
+  },
+  bidBadgeTextSmall: {
+    color: '#fff',
+    fontSize: 8,
+    fontWeight: '800',
+  },
 });
 
 export default ListingsScreen;

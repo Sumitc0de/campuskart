@@ -10,7 +10,7 @@ const SALT_ROUNDS = 12;
  */
 const register = async (req, res) => {
   try {
-    const { name, email, password, university, department, student_year, batch } = req.body;
+    const { name, email, password, university, department, student_year, batch, pickup_location } = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -57,7 +57,8 @@ const register = async (req, res) => {
       university || 'VCET',
       department || null,
       student_year || null,
-      batch || null
+      batch || null,
+      pickup_location || 'Campus Main Library'
     );
 
     // Generate JWT token
@@ -79,6 +80,7 @@ const register = async (req, res) => {
         department: user.department,
         student_year: user.student_year,
         batch: user.batch,
+        pickup_location: user.pickup_location,
         is_verified: user.is_verified,
       },
     });
@@ -144,6 +146,7 @@ const login = async (req, res) => {
         department: user.department,
         student_year: user.student_year,
         batch: user.batch,
+        pickup_location: user.pickup_location,
         is_verified: user.is_verified,
       },
     });
