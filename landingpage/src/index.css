@@ -1,0 +1,96 @@
+:root {
+  /* Colors - Digital Aurora Palette */
+  --bg-base: #050816;
+  --bg-surface: #0a1128;
+  --bg-container: #141b33;
+  --bg-container-high: #1c2645;
+  
+  --primary: #4647d3;
+  --primary-light: #6163ee;
+  --primary-glow: rgba(70, 71, 211, 0.4);
+  
+  --secondary: #b00d6a;
+  --secondary-light: #ff67ad;
+  
+  --tertiary: #00d1ff;
+  
+  --text-main: #e2e4f9;
+  --text-dim: #a7aabe;
+  --text-bright: #ffffff;
+  
+  --gradient-primary: linear-gradient(135deg, #4647d3 0%, #6163ee 100%);
+  --gradient-premium: linear-gradient(135deg, #4647d3 0%, #b00d6a 100%);
+  --gradient-glow: linear-gradient(135deg, rgba(70, 71, 211, 0.2) 0%, rgba(176, 13, 106, 0.2) 100%);
+
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(12px);
+
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: var(--text-main);
+  background-color: var(--bg-base);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+  color: var(--text-bright);
+  line-height: 1.1;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Base Layout Utilities */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-padding {
+  padding: 100px 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
