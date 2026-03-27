@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="logo">
           <span className="logo-campus">Campus</span><span className="logo-kart">Kart</span>
         </div>
-        
+
         <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
           <a href="#home" onClick={() => setMenuOpen(false)}>Home</a>
           <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
@@ -34,12 +34,17 @@ const Navbar = () => {
         </div>
 
         <div className="nav-actions">
-           <button className="btn btn-primary desktop-only-btn">Download App</button>
-           <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle Menu">
-             <div className="bar"></div>
-             <div className="bar"></div>
-             <div className="bar"></div>
-           </button>
+          <button onClick={() =>
+            window.open(
+              "https://drive.google.com/uc?export=download&id=1BrHNmQwvHgNFoiVlfh9UW4YvVBo_we6c",
+              "_blank"
+            )
+          } className="btn btn-primary desktop-only-btn">Download App</button>
+          <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle Menu">
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+          </button>
         </div>
       </div>
     </nav>
@@ -58,11 +63,16 @@ const Hero = () => (
           <span className="gradient-text">Campus Commerce.</span>
         </h1>
         <p className="hero-subtitle">
-          Buy, sell, and bid securely within your college ecosystem. 
+          Buy, sell, and bid securely within your college ecosystem.
           Verified .edu accounts ensure a safe haven for student trade.
         </p>
         <div className="hero-btns">
-          <button className="btn btn-primary btn-lg">Get Started</button>
+          <button onClick={() =>
+            window.open(
+              "https://drive.google.com/uc?export=download&id=1BrHNmQwvHgNFoiVlfh9UW4YvVBo_we6c",
+              "_blank"
+            )
+          } className="btn btn-primary btn-lg">Download</button>
           <button className="btn btn-outline btn-lg">Explore Marketplace</button>
         </div>
       </div>
