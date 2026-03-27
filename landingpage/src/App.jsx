@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="nav-actions">
           <button onClick={() =>
             window.open(
-              "https://drive.google.com/uc?export=download&id=1BrHNmQwvHgNFoiVlfh9UW4YvVBo_we6c",
+              "https://drive.google.com/uc?export=download&id=1cE8uytPgeMQSvlRWpyB9szhzb2ZPHXR-",
               "_blank"
             )
           } className="btn btn-primary desktop-only-btn">Download App</button>
@@ -69,7 +69,7 @@ const Hero = () => (
         <div className="hero-btns">
           <button onClick={() =>
             window.open(
-              "https://drive.google.com/uc?export=download&id=1BrHNmQwvHgNFoiVlfh9UW4YvVBo_we6c",
+              "https://drive.google.com/uc?export=download&id=1cE8uytPgeMQSvlRWpyB9szhzb2ZPHXR-",
               "_blank"
             )
           } className="btn btn-primary btn-lg">Download</button>
