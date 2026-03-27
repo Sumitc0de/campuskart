@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -172,7 +173,12 @@ const styles = StyleSheet.create({
   },
   brandContainer: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
+  },
+  brandLogo: {
+    width: 0,
+    height: 0,
+    marginBottom: 0,
   },
   brandName: {
     fontSize: 28,
@@ -191,6 +197,7 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     marginBottom: 32,
+    alignItems: 'center',
   },
   welcomeText: {
     fontSize: 40,
@@ -198,11 +205,13 @@ const styles = StyleSheet.create({
     color: '#2c2f31',
     letterSpacing: -1.5,
     lineHeight: 46,
+    textAlign: 'center',
   },
   subtitleText: {
     fontSize: 16,
     color: '#595c5e',
     marginTop: 8,
+    textAlign: 'center',
   },
   formCard: {
     backgroundColor: '#ffffff',

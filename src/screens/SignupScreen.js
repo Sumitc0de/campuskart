@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -74,6 +75,11 @@ const SignupScreen = ({ navigation }) => {
       >
         {/* Brand Header */}
         <View style={styles.brandContainer}>
+          <Image 
+            source={require('../../assets/icon.png')} 
+            style={styles.brandLogo} 
+            resizeMode="contain"
+          />
           <Text style={styles.brandName}>Campus<Text style={styles.brandAccent}>Kart</Text></Text>
           <Text style={styles.brandTagline}>Your campus marketplace</Text>
         </View>
@@ -249,7 +255,8 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f7f9' },
   scrollContent: { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
-  brandContainer: { alignItems: 'center', marginBottom: 32 },
+  brandContainer: { alignItems: 'center', marginBottom: 24 },
+  brandLogo: { width: 80, height: 80, marginBottom: 8 },
   brandName: { fontSize: 28, fontWeight: '800', color: '#4647d3' },
   brandAccent: { color: '#b00d6a' },
   brandTagline: { fontSize: 13, color: '#595c5e', marginTop: 4 },
