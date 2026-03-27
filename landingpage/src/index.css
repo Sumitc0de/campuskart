@@ -1,38 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 :root {
-  /* Colors - Digital Aurora Palette */
-  --bg-base: #050816;
-  --bg-surface: #0a1128;
-  --bg-container: #141b33;
-  --bg-container-high: #1c2645;
+  /* Nebula Core - High-Performance Palette */
+  --surface: #12131c;
+  --surface-dim: #12131c;
+  --surface-bright: #383843;
+  --surface-container-lowest: #0d0e17;
+  --surface-container-low: #1a1b24;
+  --surface-container: #1e1f29;
+  --surface-container-high: #282933;
+  --surface-container-highest: #33343e;
+  --surface-variant: rgba(51, 52, 62, 0.6);
   
-  --primary: #4647d3;
-  --primary-light: #6163ee;
-  --primary-glow: rgba(70, 71, 211, 0.4);
+  --primary: #c0c1ff;
+  --primary-container: #4647d3;
+  --on-primary: #1100a9;
+  --on-primary-container: #d0d0ff;
   
-  --secondary: #b00d6a;
-  --secondary-light: #ff67ad;
+  --secondary: #ffb0cd;
+  --secondary-container: #aa0265;
+  --on-secondary: #640039;
+  --on-secondary-container: #ffbad3;
   
-  --tertiary: #00d1ff;
+  --tertiary: #c0c1ff;
+  --tertiary-container: #4347d5;
   
-  --text-main: #e2e4f9;
-  --text-dim: #a7aabe;
-  --text-bright: #ffffff;
+  --on-surface: #e3e1ef;
+  --on-surface-variant: #c7c4d7;
+  --outline: #908fa0;
+  --outline-variant: rgba(70, 69, 84, 0.15);
   
-  --gradient-primary: linear-gradient(135deg, #4647d3 0%, #6163ee 100%);
-  --gradient-premium: linear-gradient(135deg, #4647d3 0%, #b00d6a 100%);
-  --gradient-glow: linear-gradient(135deg, rgba(70, 71, 211, 0.2) 0%, rgba(176, 13, 106, 0.2) 100%);
+  --error: #ffb4ab;
+  
+  /* Gradients */
+  --gradient-velocity: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+  --gradient-ignite: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-container) 100%);
+  --gradient-nebula: linear-gradient(135deg, rgba(70, 71, 211, 0.1) 0%, rgba(170, 2, 101, 0.1) 100%);
 
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(12px);
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Manrope', sans-serif;
 
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
-  color: var(--text-main);
-  background-color: var(--bg-base);
+  color: var(--on-surface);
+  background-color: var(--surface);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -50,20 +64,23 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--bg-base);
-  color: var(--text-main);
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-body);
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5 {
-  color: var(--text-bright);
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  color: var(--on-surface);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 a {
   text-decoration: none;
   color: inherit;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 button {
@@ -76,21 +93,43 @@ button {
 
 /* Base Layout Utilities */
 .container {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 4rem;
 }
 
 .section-padding {
-  padding: 100px 0;
+  padding: 120px 0;
+}
+
+/* Effects */
+.glass {
+  background: var(--surface-variant);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--outline-variant);
+}
+
+.glow-primary {
+  box-shadow: 0 0 40px rgba(70, 71, 211, 0.15);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 40px rgba(170, 2, 101, 0.15);
 }
 
 /* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes velocityFadeIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+.animate-velocity {
+  animation: velocityFadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
 }

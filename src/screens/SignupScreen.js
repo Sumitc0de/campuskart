@@ -11,7 +11,9 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerUser } from '../services/api';
@@ -64,191 +66,195 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Brand Header */}
-        <View style={styles.brandContainer}>
-          <Image 
-            source={require('../../assets/icon.png')} 
-            style={styles.brandLogo} 
-            resizeMode="contain"
-          />
-          <Text style={styles.brandName}>Campus<Text style={styles.brandAccent}>Kart</Text></Text>
-          <Text style={styles.brandTagline}>Your campus marketplace</Text>
-        </View>
-
-        {/* Welcome Section */}
-        <View style={styles.headerSection}>
-          <Text style={styles.welcomeText}>Create{'\n'}Account</Text>
-          <Text style={styles.subtitleText}>Join the campus marketplace</Text>
-        </View>
-
-        {/* Form Card */}
-        <View style={styles.formCard}>
-          {/* Name Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>FULL NAME</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>👤</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="What's your name?"
-                placeholderTextColor="#abadaf"
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="words"
-              />
-            </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Brand Header */}
+          <View style={styles.brandContainer}>
+            <Image 
+              source={require('../../assets/icon.png')} 
+              style={styles.brandLogo} 
+              resizeMode="contain"
+            />
+            <Text style={styles.brandName}>Campus<Text style={styles.brandAccent}>Kart</Text></Text>
+            <Text style={styles.brandTagline}>Your campus marketplace</Text>
           </View>
 
-          {/* Email Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>EMAIL</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>✉️</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="you@college.edu"
-                placeholderTextColor="#abadaf"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-            <Text style={styles.inputHint}>Emails ending in @vcet.edu.in are automatically verified.</Text>
+          {/* Welcome Section */}
+          <View style={styles.headerSection}>
+            <Text style={styles.welcomeText}>Create{'\n'}Account</Text>
+            <Text style={styles.subtitleText}>Join the campus marketplace</Text>
           </View>
 
-          {/* Password Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>PASSWORD</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>🔒</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Min. 6 characters"
-                placeholderTextColor="#abadaf"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
-                <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+          {/* Form Card */}
+          <View style={styles.formCard}>
+            {/* Name Input */}
+            <div style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>FULL NAME</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>👤</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="What's your name?"
+                  placeholderTextColor="#abadaf"
+                  value={name}
+                  onChangeText={setName}
+                  autoCapitalize="words"
+                />
+              </View>
+            </div>
+
+            {/* Email Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>EMAIL</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>✉️</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="you@college.edu"
+                  placeholderTextColor="#abadaf"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+              <Text style={styles.inputHint}>Emails ending in @vcet.edu.in are automatically verified.</Text>
+            </View>
+
+            {/* Password Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>PASSWORD</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🔒</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Min. 6 characters"
+                  placeholderTextColor="#abadaf"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
+                  <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* College Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>COLLEGE / UNIVERSITY</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🏫</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. VCET"
+                  placeholderTextColor="#abadaf"
+                  value={college}
+                  onChangeText={setCollege}
+                  autoCapitalize="words"
+                />
+              </View>
+            </View>
+
+            {/* Dept & Year Row */}
+            <View style={styles.row}>
+              <View style={[styles.inputGroup, { flex: 1.2, marginRight: 10 }]}>
+                <Text style={styles.inputLabel}>DEPARTMENT</Text>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputIcon}>🏢</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. CS"
+                    placeholderTextColor="#abadaf"
+                    value={department}
+                    onChangeText={setDepartment}
+                  />
+                </View>
+              </View>
+
+              <View style={[styles.inputGroup, { flex: 1 }]}>
+                <Text style={styles.inputLabel}>STUDENT YEAR</Text>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputIcon}>🎓</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. 3rd"
+                    placeholderTextColor="#abadaf"
+                    value={year}
+                    onChangeText={setYear}
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* Batch Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>BATCH (OPTIONAL)</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>🗓️</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. 2021-2025"
+                  placeholderTextColor="#abadaf"
+                  value={batch}
+                  onChangeText={setBatch}
+                />
+              </View>
+            </View>
+
+            {/* Pickup Location Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>DEFAULT PICKUP LOCATION</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.inputIcon}>📍</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. Main Library"
+                  placeholderTextColor="#abadaf"
+                  value={pickupLocation}
+                  onChangeText={setPickupLocation}
+                />
+              </View>
+            </View>
+
+            {/* Signup Button */}
+            <TouchableOpacity
+              onPress={handleSignup}
+              disabled={loading}
+              activeOpacity={0.85}
+              style={styles.signupBtnWrapper}
+            >
+              <LinearGradient
+                colors={['#4647d3', '#9396ff']}
+                style={styles.signupButton}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" size="small" />
+                ) : (
+                  <Text style={styles.signupButtonText}>Sign Up</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>Already have an account? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.loginLink}>Log In</Text>
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* College Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>COLLEGE / UNIVERSITY</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>🏫</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. VCET"
-                placeholderTextColor="#abadaf"
-                value={college}
-                onChangeText={setCollege}
-                autoCapitalize="words"
-              />
-            </View>
-          </View>
-
-          {/* Dept & Year Row */}
-          <View style={styles.row}>
-            <View style={[styles.inputGroup, { flex: 1.2, marginRight: 10 }]}>
-              <Text style={styles.inputLabel}>DEPARTMENT</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>🏢</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="e.g. CS"
-                  placeholderTextColor="#abadaf"
-                  value={department}
-                  onChangeText={setDepartment}
-                />
-              </View>
-            </View>
-
-            <View style={[styles.inputGroup, { flex: 1 }]}>
-              <Text style={styles.inputLabel}>STUDENT YEAR</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>🎓</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="e.g. 3rd"
-                  placeholderTextColor="#abadaf"
-                  value={year}
-                  onChangeText={setYear}
-                />
-              </View>
-            </View>
-          </View>
-
-          {/* Batch Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>BATCH (OPTIONAL)</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>🗓️</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. 2021-2025"
-                placeholderTextColor="#abadaf"
-                value={batch}
-                onChangeText={setBatch}
-              />
-            </View>
-          </View>
-          {/* Pickup Location Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>DEFAULT PICKUP LOCATION</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputIcon}>📍</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. Main Library"
-                placeholderTextColor="#abadaf"
-                value={pickupLocation}
-                onChangeText={setPickupLocation}
-              />
-            </View>
-          </View>
-
-          {/* Signup Button */}
-          <TouchableOpacity
-            onPress={handleSignup}
-            disabled={loading}
-            activeOpacity={0.85}
-            style={styles.signupBtnWrapper}
-          >
-            <LinearGradient
-              colors={['#4647d3', '#9396ff']}
-              style={styles.signupButton}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" size="small" />
-              ) : (
-                <Text style={styles.signupButtonText}>Sign Up</Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.loginLink}>Log In</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

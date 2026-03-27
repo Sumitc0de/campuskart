@@ -135,25 +135,20 @@ const MainTabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBarWrapper: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'transparent',
-  },
-  tabBarContainer: {
-    flexDirection: 'row',
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingTop: 10,
-    paddingHorizontal: 8,
     shadowColor: '#2c2f31',
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 20,
-    height: 85,
+  },
+  tabBarContainer: {
+    flexDirection: 'row',
+    paddingTop: 10,
+    paddingHorizontal: 8,
+    minHeight: 70,
     alignItems: 'center',
     justifyContent: 'space-between',
   },

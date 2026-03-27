@@ -5,13 +5,13 @@ import {
   StyleSheet, 
   FlatList, 
   TouchableOpacity, 
-  SafeAreaView, 
   StatusBar,
   ActivityIndicator,
   RefreshControl,
   Alert,
   Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getNotifications, markNotificationRead, clearNotifications } from '../services/api';
 import { useFocusEffect } from '@react-navigation/native';

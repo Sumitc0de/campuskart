@@ -8,8 +8,6 @@ const App = () => {
       <Hero />
       <Features />
       <HowItWorks />
-      <HotOnCampus />
-      <Testimonial />
       <CTASection />
       <Footer />
     </div>
@@ -17,16 +15,16 @@ const App = () => {
 };
 
 const Navbar = () => (
-  <nav className="navbar animate-fade-in">
+  <nav className="navbar">
     <div className="container nav-content">
       <div className="logo">
-        <span className="logo-campus">Campus</span><span className="logo-kart">Cart</span>
+        <span className="logo-campus">Campus</span><span className="logo-kart">Kart</span>
       </div>
       <div className="nav-links">
-        <a href="#home">HOME</a>
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
         <a href="#how">How it Works</a>
-        <a href="#market">Marketplace</a>
-        <a href="#community">Community</a>
+        <a href="#safety">Safety</a>
       </div>
       <button className="btn btn-primary">Download App</button>
     </div>
@@ -34,36 +32,32 @@ const Navbar = () => (
 );
 
 const Hero = () => (
-  <section id="home" className="hero-section section-padding animate-fade-in">
+  <section id="home" className="hero-section animate-velocity">
     <div className="container hero-content">
       <div className="hero-text">
         <div className="badge-verified">
-          <span className="icon">🛡️</span> VERIFIED STUDENTS ONLY
+          🛡️ CAMPUS VERIFIED ONLY
         </div>
         <h1 className="hero-title">
-          Buy. Sell. Bid — <br />
-          <span className="gradient-text">Only Inside Your Campus.</span>
+          The New Standard of <br />
+          <span className="gradient-text">Campus Commerce.</span>
         </h1>
         <p className="hero-subtitle">
-          A trusted marketplace for students to buy books, sell gadgets, and connect safely within their college. No strangers. Just peers.
+          Buy, sell, and bid securely within your college ecosystem. 
+          Verified .edu accounts ensure a safe haven for student trade.
         </p>
         <div className="hero-btns">
-          <button className="btn btn-primary btn-lg">Download App</button>
+          <button className="btn btn-primary btn-lg">Get Started</button>
           <button className="btn btn-outline btn-lg">Explore Marketplace</button>
         </div>
       </div>
       <div className="hero-visual">
-        <div className="phone-mockup phone-1">
-          <div className="phone-screen bg-glass">
-             <div className="mock-card"></div>
-             <div className="mock-card"></div>
-          </div>
-        </div>
-        <div className="phone-mockup phone-2">
-          <div className="phone-screen bg-glass">
-            <div className="mock-card"></div>
-            <div className="mock-card"></div>
-          </div>
+        <div className="app-preview-card">
+          <div className="mock-ui-header"></div>
+          <div className="mock-ui-block"></div>
+          <div className="mock-ui-row"></div>
+          <div className="mock-ui-row" style={{ width: '60%' }}></div>
+          <div className="mock-ui-block" style={{ height: '120px', marginTop: '40px' }}></div>
         </div>
       </div>
     </div>
@@ -72,25 +66,23 @@ const Hero = () => (
 
 const Features = () => {
   const features = [
-    { icon: '🛍️', title: 'Buy & Sell Easily', desc: 'List your items in seconds. Ship or meet on campus.' },
-    { icon: '📊', title: 'Live Bidding System', desc: 'Get the best market value for your premium gear.' },
-    { icon: '💬', title: 'Safe In-App Chat', desc: 'Coordinate meetups without ever sharing personal info.' },
-    { icon: '🏢', title: 'Campus-only Market', desc: 'Filter items by your specific dorm or building.' },
-    { icon: '⚡', title: 'Fast Local Deals', desc: 'No shipping delays. Meet between classes and deal.' },
-    { icon: '❤️', title: 'Trusted Community', desc: 'Every user is verified. It\'s a campus-only zone.' },
+    { icon: '🛡️', title: 'Student Verified', desc: 'Every user is vetted through official university email verification.' },
+    { icon: '⚖️', title: 'Secure Bidding', desc: 'Our dynamic bidding engine ensures fair market value for every item.' },
+    { icon: '💬', title: 'Instant Chat', desc: 'Secure, real-time messaging to coordinate meetups effortlessly.' },
+    { icon: '📍', title: 'Campus Specific', desc: 'Browse items exclusively within your dorm, building, or whole campus.' },
   ];
 
   return (
     <section id="features" className="features-section section-padding">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Smart Campus <span className="gradient-text">Commerce.</span></h2>
-          <p className="section-sub">Designed for the pace and safety of college life.</p>
+          <h2 className="section-title">Designed for <span className="gradient-text">Velocity.</span></h2>
+          <p className="section-sub">Engineered to handle the fast-paced nature of student life and campus trade.</p>
         </div>
         <div className="features-grid">
           {features.map((f, i) => (
-            <div key={i} className="feature-card animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="feature-icon">{f.icon}</div>
+            <div key={i} className="feature-card">
+              <span className="feature-icon">{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>
@@ -103,23 +95,25 @@ const Features = () => {
 
 const HowItWorks = () => {
   const steps = [
-    { num: 1, title: 'Download App', sub: 'iOS or Android' },
-    { num: 2, title: 'Verify Email', sub: 'Use your .edu email' },
-    { num: 3, title: 'List or Browse', sub: 'Upload items in seconds' },
-    { num: 4, title: 'Bid or Buy', sub: 'Secure transactions' },
-    { num: 5, title: 'Meet & Deal', sub: 'Easy campus swap' },
+    { num: '01', title: 'Join', sub: 'Sign up with .edu' },
+    { num: '02', title: 'List', sub: 'Post in seconds' },
+    { num: '03', title: 'Bid', sub: 'Negotiate prices' },
+    { num: '04', title: 'Chat', sub: 'Coordinate meeting' },
+    { num: '05', title: 'Swap', sub: 'Secure campus exchange' },
   ];
 
   return (
     <section id="how" className="how-section section-padding">
       <div className="container">
-        <h2 className="section-title text-center">From Listing to <span className="gradient-text-alt">Sold in Minutes.</span></h2>
+        <div className="section-header">
+          <h2 className="section-title">Seamless <span className="gradient-text">Workflow.</span></h2>
+        </div>
         <div className="steps-container">
           {steps.map((s, i) => (
             <div key={i} className="step-item">
               <div className="step-number">{s.num}</div>
-              <h4>{s.title}</h4>
-              <p>{s.sub}</p>
+              <h3>{s.title}</h3>
+              <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem' }}>{s.sub}</p>
             </div>
           ))}
         </div>
@@ -127,65 +121,17 @@ const HowItWorks = () => {
     </section>
   );
 };
-
-const HotOnCampus = () => {
-  const products = [
-    { img: '📚', name: 'Bio Textbook Set', price: '$83', status: 'LIVE BID' },
-    { img: '🧮', name: 'TI-84 Plus CE', price: '$45', status: 'FIXED PRICE' },
-    { img: '🎧', name: 'Noise-Cancelling Pro', price: '$120', status: 'LIVE BID' },
-  ];
-
-  return (
-    <section id="market" className="hot-section section-padding">
-      <div className="container">
-        <div className="hot-header">
-          <h2 className="section-title">Hot on <span className="gradient-text">Campus.</span></h2>
-          <button className="btn-link">View All Items →</button>
-        </div>
-        <div className="products-grid">
-          {products.map((p, i) => (
-            <div key={i} className="product-card">
-              <div className="product-img-placeholder">{p.img}</div>
-              <div className="product-info">
-                <div className="price-row">
-                   <h3>{p.name}</h3>
-                   <span className="status-badge">{p.status}</span>
-                </div>
-                <p className="price-tag">{p.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Testimonial = () => (
-  <section id="community" className="testimonial-section section-padding">
-    <div className="container">
-      <div className="testimonial-content">
-        <div className="avatars">
-           <div className="avatar">👤</div>
-           <div className="avatar">👤</div>
-           <div className="avatar">👤</div>
-        </div>
-        <q className="quote-text">
-          CampusCart changed how we swap gear. I sold my old books in 20 minutes and bought a bike right outside my dorm. It's safe and stupidly fast.
-        </q>
-        <span className="author">Alex Rivers, <span className="uni">Junior at State University</span></span>
-      </div>
-    </div>
-  </section>
-);
 
 const CTASection = () => (
-  <section className="cta-section section-padding">
+  <section className="section-padding">
     <div className="container">
-      <div className="cta-card premium-gradient">
-        <h2>Start Buying & Selling Today</h2>
-        <p>Join hundreds of students on your campus. Safe, verified, and completely local.</p>
-        <button className="btn btn-white btn-lg">Download App</button>
+      <div className="cta-card">
+        <h2>Ready to trade?</h2>
+        <p>Join the exclusive network of student commerce today. Download the CampusKart app and take control of your campus marketplace.</p>
+        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
+          <button className="btn btn-white btn-lg">App Store</button>
+          <button className="btn btn-outline btn-lg" style={{ background: 'transparent', borderColor: 'var(--on-primary)' }}>Play Store</button>
+        </div>
       </div>
     </div>
   </section>
@@ -195,15 +141,14 @@ const Footer = () => (
   <footer className="footer">
     <div className="container footer-content">
       <div className="footer-left">
-        <div className="logo logo-sm">CampusCart</div>
-        <p className="copyright">© 2026 CampusCart — The Exclusive Student Network</p>
+        <div className="logo" style={{ marginBottom: '1.5rem' }}>CampusKart</div>
+        <p style={{ color: 'var(--on-surface-variant)', fontSize: '0.9rem' }}>© 2026 CampusKart. The High-Performance Student Network.</p>
       </div>
       <div className="footer-links">
         <a href="#about">About</a>
-        <a href="#safety">Campus Safety</a>
-        <a href="#terms">Terms of Service</a>
-        <a href="#privacy">Privacy Policy</a>
-        <a href="#contact">Contact Support</a>
+        <a href="#safety">Safety</a>
+        <a href="#terms">Terms</a>
+        <a href="#privacy">Privacy</a>
       </div>
     </div>
   </footer>

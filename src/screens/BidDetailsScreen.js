@@ -5,12 +5,12 @@ import {
   StyleSheet, 
   ScrollView, 
   TouchableOpacity, 
-  SafeAreaView, 
   Image, 
   ActivityIndicator,
   StatusBar,
   Dimensions
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getProductById, getUserProfile, getProductBids, getFullImageUrl } from '../services/api';
 import { LinearGradient } from 'expo-linear-gradient';

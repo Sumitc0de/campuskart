@@ -12,6 +12,7 @@ import {
   StatusBar,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -77,8 +78,6 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-
-
   const filteredProducts = products.filter(item => {
     const matchesFilter = selectedCategory === 'all' || (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
     const title = item.title ? item.title.toLowerCase() : '';
@@ -92,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
   const recentDrops = [...filteredProducts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 10);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f7f9" />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -307,11 +306,9 @@ const HomeScreen = ({ navigation }) => {
           ))}
         </ScrollView>
 
-        {/* Bottom Spacing for FAB */}
-        <View style={{ height: 100 }} />
+        {/* Bottom Spacing */}
+        <View style={{ height: 120 }} />
       </ScrollView>
-
-
 
       {/* ─── Student Curator Badge ─── */}
       <View style={styles.curatorBadge}>
@@ -342,7 +339,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.fabText}>Sell Item</Text>
         </LinearGradient>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -352,7 +349,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f7f9',
   },
   scrollContent: {
-    paddingTop: 56,
+    paddingTop: 10,
   },
 
   // ─── Top Bar ───
@@ -772,34 +769,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     color: '#2c2f31',
-  },
-
-  // ─── FAB ───
-  fab: {
-    position: 'absolute',
-    bottom: 90,
-    left: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 16,
-    gap: 8,
-    shadowColor: '#4647d3',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  fabIcon: {
-    color: '#f4f1ff',
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  fabText: {
-    color: '#f4f1ff',
-    fontSize: 14,
-    fontWeight: '700',
   },
 
   // ─── Curator Badge ───
