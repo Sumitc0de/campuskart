@@ -37,9 +37,16 @@
   --gradient-ignite: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-container) 100%);
   --gradient-nebula: linear-gradient(135deg, rgba(70, 71, 211, 0.1) 0%, rgba(170, 2, 101, 0.1) 100%);
 
-  /* Typography */
+  /* Typography - Dynamic Scaling */
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Manrope', sans-serif;
+
+  /* Fluid Typography Scale */
+  --fs-hero: clamp(3rem, 10vw, 5.5rem);
+  --fs-h2: clamp(2rem, 6vw, 4rem);
+  --fs-h3: clamp(1.5rem, 4vw, 2.5rem);
+  --fs-body: clamp(1rem, 1.2vw, 1.2rem);
+  --fs-subtitle: clamp(1.1rem, 1.5vw, 1.5rem);
 
   line-height: 1.5;
   font-weight: 400;
@@ -68,13 +75,35 @@ body {
   color: var(--on-surface);
   font-family: var(--font-body);
   overflow-x: hidden;
+  width: 100%;
 }
 
-h1, h2, h3, h4, .font-display {
+h1, .hero-title {
   font-family: var(--font-display);
+  font-size: var(--fs-hero);
   color: var(--on-surface);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+h2, .section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+
+p {
+  font-size: var(--fs-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 a {
@@ -96,10 +125,11 @@ button {
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 4rem;
+  width: 100%;
 }
 
 .section-padding {
-  padding: 120px 0;
+  padding: clamp(80px, 10vh, 120px) 0;
 }
 
 /* Effects */
@@ -114,10 +144,6 @@ button {
   box-shadow: 0 0 40px rgba(70, 71, 211, 0.15);
 }
 
-.glow-secondary {
-  box-shadow: 0 0 40px rgba(170, 2, 101, 0.15);
-}
-
 /* Animations */
 @keyframes velocityFadeIn {
   from { opacity: 0; transform: translateY(30px) scale(0.98); }
@@ -125,7 +151,7 @@ button {
 }
 
 .animate-velocity {
-  animation: velocityFadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: velocityFadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 @media (max-width: 768px) {

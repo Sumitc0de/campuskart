@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 const App = () => {
@@ -14,22 +14,37 @@ const App = () => {
   );
 };
 
-const Navbar = () => (
-  <nav className="navbar">
-    <div className="container nav-content">
-      <div className="logo">
-        <span className="logo-campus">Campus</span><span className="logo-kart">Kart</span>
+const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  return (
+    <nav className={`navbar ${menuOpen ? 'menu-open' : ''}`}>
+      <div className="container nav-content">
+        <div className="logo">
+          <span className="logo-campus">Campus</span><span className="logo-kart">Kart</span>
+        </div>
+        
+        <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
+          <a href="#home" onClick={() => setMenuOpen(false)}>Home</a>
+          <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
+          <a href="#how" onClick={() => setMenuOpen(false)}>How it Works</a>
+          <button className="btn btn-primary mobile-only-btn">Download App</button>
+        </div>
+
+        <div className="nav-actions">
+           <button className="btn btn-primary desktop-only-btn">Download App</button>
+           <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle Menu">
+             <div className="bar"></div>
+             <div className="bar"></div>
+             <div className="bar"></div>
+           </button>
+        </div>
       </div>
-      <div className="nav-links">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="#how">How it Works</a>
-        <a href="#safety">Safety</a>
-      </div>
-      <button className="btn btn-primary">Download App</button>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 const Hero = () => (
   <section id="home" className="hero-section animate-velocity">
