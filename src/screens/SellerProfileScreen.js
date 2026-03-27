@@ -138,7 +138,7 @@ const SellerProfileScreen = ({ route, navigation }) => {
                   </View>
                   <View style={styles.listingInfo}>
                     <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
-                    <Text style={styles.itemPrice}>${item.price}</Text>
+                    <Text style={styles.itemPrice}>₹{item.price}</Text>
                   </View>
                 </TouchableOpacity>
               ))}

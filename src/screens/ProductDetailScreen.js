@@ -73,12 +73,12 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
     const amount = parseFloat(bidAmount);
     if (highestBid && amount <= parseFloat(highestBid.amount)) {
-      Alert.alert('Too Low', `Your bid must be higher than the current highest bid ($${highestBid.amount})`);
+      Alert.alert('Too Low', `Your bid must be higher than the current highest bid (₹${highestBid.amount})`);
       return;
     }
 
     if (amount <= parseFloat(product.price)) {
-      Alert.alert('Too Low', `Your bid must be at least the starting price ($${product.price})`);
+      Alert.alert('Too Low', `Your bid must be at least the starting price (₹${product.price})`);
       return;
     }
 
@@ -99,7 +99,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out this ${product.title} on CampusKart! Only $${product.price}`,
+        message: `Check out this ${product.title} on CampusKart! Only ₹${product.price}`,
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -171,9 +171,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
               <Text style={styles.priceLabel}>
                 {product.price_type === 'bid' ? 'Current Bid' : 'Fixed Price'}
               </Text>
-              <Text style={styles.price}>${product.price}</Text>
+              <Text style={styles.price}>₹{product.price}</Text>
             </View>
-            {product.condition === 'New' && <Text style={styles.oldPrice}>${(parseFloat(product.price) * 1.2).toFixed(2)}</Text>}
+            {product.condition === 'New' && <Text style={styles.oldPrice}>₹{(parseFloat(product.price) * 1.2).toFixed(2)}</Text>}
           </View>
 
           {/* ─── Status Badges ─── */}
@@ -244,7 +244,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                     </View>
                     <View style={styles.highestBidInfo}>
                       <Text style={styles.highestBidLabel}>Highest Bid by {highestBid.buyer_name}</Text>
-                      <Text style={styles.highestBidAmount}>${highestBid.amount}</Text>
+                      <Text style={styles.highestBidAmount}>₹{highestBid.amount}</Text>
                     </View>
                     <Text style={styles.highestBidTime}>
                        {new Date(highestBid.created_at).toLocaleDateString()}
@@ -263,7 +263,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                             </View>
                             <Text style={styles.bidItemName}>{bid.buyer_name}</Text>
                           </View>
-                          <Text style={styles.bidItemAmount}>${bid.amount}</Text>
+                          <Text style={styles.bidItemAmount}>₹{bid.amount}</Text>
                         </View>
                       ))}
                       {bids.length > 5 && (
@@ -360,7 +360,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
             <View style={styles.bidInputSection}>
               <Text style={styles.inputLabel}>ENTER AMOUNT</Text>
               <View style={styles.inputWrapper}>
-                <Text style={styles.currencyPrefix}>$</Text>
+                <Text style={styles.currencyPrefix}>₹</Text>
                 <TextInput
                   style={styles.bidInput}
                   placeholder="0.00"
@@ -372,7 +372,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
               </View>
               {highestBid && (
                 <Text style={styles.minBidNote}>
-                   Min. Bid: <Text style={{fontWeight: '700'}}>${(parseFloat(highestBid.amount) + 1).toFixed(2)}+</Text>
+                   Min. Bid: <Text style={{fontWeight: '700'}}>₹{(parseFloat(highestBid.amount) + 1).toFixed(2)}+</Text>
                 </Text>
               )}
             </View>

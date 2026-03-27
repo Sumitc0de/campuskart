@@ -168,7 +168,7 @@ const ManageListingsScreen = ({ navigation }) => {
 
                 <View style={styles.infoWrapper}>
                   <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                  <Text style={styles.price}>${item.price}</Text>
+                  <Text style={styles.price}>₹{item.price}</Text>
                   <View style={styles.metaRow}>
                     <Ionicons name="time-outline" size={14} color="#abadaf" />
                     <Text style={styles.metaText}>{new Date(item.created_at).toLocaleDateString()}</Text>

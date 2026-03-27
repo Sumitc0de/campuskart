@@ -200,7 +200,7 @@ const ListingsScreen = ({ navigation }) => {
                 <View style={styles.listingInfo}>
                   <Text style={styles.listingTitle} numberOfLines={1}>{item.title}</Text>
                   <View style={styles.priceContainer}>
-                    <Text style={styles.listingPrice}>${item.price}</Text>
+                    <Text style={styles.listingPrice}>₹{item.price}</Text>
                     {item.price_type === 'bid' && (
                       <View style={styles.bidBadgeSmall}>
                         <Ionicons name="stats-chart" size={10} color="#fff" />

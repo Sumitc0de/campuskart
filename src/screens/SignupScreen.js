@@ -97,7 +97,7 @@ const SignupScreen = ({ navigation }) => {
           {/* Form Card */}
           <View style={styles.formCard}>
             {/* Name Input */}
-            <div style={styles.inputGroup}>
+            <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>FULL NAME</Text>
               <View style={styles.inputWrapper}>
                 <Text style={styles.inputIcon}>👤</Text>
@@ -110,7 +110,7 @@ const SignupScreen = ({ navigation }) => {
                   autoCapitalize="words"
                 />
               </View>
-            </div>
+            </View>
 
             {/* Email Input */}
             <View style={styles.inputGroup}>

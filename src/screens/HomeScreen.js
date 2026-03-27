@@ -220,7 +220,7 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text style={styles.featuredTitle}>{featuredProduct.title}</Text>
               <View style={styles.featuredBottom}>
-                <Text style={styles.featuredPrice}>${featuredProduct.price}</Text>
+                <Text style={styles.featuredPrice}>₹{featuredProduct.price}</Text>
                 <View style={styles.arrowButton}>
                   <Text style={styles.arrowIcon}>→</Text>
                 </View>
@@ -258,7 +258,7 @@ const HomeScreen = ({ navigation }) => {
                 {item.title}
               </Text>
               <View style={styles.productPriceRow}>
-                <Text style={styles.productPrice}>${item.price}</Text>
+                <Text style={styles.productPrice}>₹{item.price}</Text>
                 <Text style={styles.productCondition}>{item.condition || 'Used - Like New'}</Text>
               </View>
             </TouchableOpacity>
@@ -301,7 +301,7 @@ const HomeScreen = ({ navigation }) => {
                 </Text>
                 <Text style={styles.dropTime}>{item.category || 'Just now'}</Text>
               </View>
-              <Text style={styles.dropPrice}>${item.price}</Text>
+              <Text style={styles.dropPrice}>₹{item.price}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

@@ -167,7 +167,7 @@ const SellItemScreen = ({ navigation, route }) => {
                 <Text style={styles.label}>Price *</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="$ 0.00"
+                  placeholder="₹ 0.00"
                   keyboardType="numeric"
                   value={price}
                   onChangeText={setPrice}
