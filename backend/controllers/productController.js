@@ -1,4 +1,5 @@
 const { query, dbType } = require('../config/db');
+const imagekit = require('../utils/imagekit');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -61,8 +62,6 @@ exports.createProduct = async (req, res) => {
     // Handle base64 image data upload
     if (image_data) {
       try {
-        const fs = require('fs');
-        const path = require('path');
         const crypto = require('crypto');
         
         // Process data URI if present
@@ -81,18 +80,17 @@ exports.createProduct = async (req, res) => {
         if (ext === 'jpeg') ext = 'jpg';
         
         const fileName = `${crypto.randomUUID()}.${ext}`;
-        const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
         
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
+        const uploadResponse = await imagekit.upload({
+          file: base64Data, // required
+          fileName: fileName, // required
+          useUniqueFileName: false, // We are already providing UUID
+          folder: "/products" // Optional: organize in a folder
+        });
         
-        const filePath = path.join(uploadsDir, fileName);
-        fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
-        
-        finalImageUrl = `/uploads/${fileName}`;
+        finalImageUrl = uploadResponse.url;
       } catch (uploadError) {
-        console.error('Error saving uploaded image:', uploadError);
+        console.error('Error uploading image to ImageKit:', uploadError);
       }
     }
 
@@ -220,8 +218,6 @@ exports.updateProduct = async (req, res) => {
     // Handle new image upload
     if (image_data && image_data.startsWith('data:image')) {
       try {
-        const fs = require('fs');
-        const path = require('path');
         const crypto = require('crypto');
         
         const matches = image_data.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
@@ -229,18 +225,18 @@ exports.updateProduct = async (req, res) => {
           const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
           const base64Data = matches[2];
           const fileName = `${crypto.randomUUID()}.${ext}`;
-          const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
           
-          if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-          }
+          const uploadResponse = await imagekit.upload({
+            file: base64Data, 
+            fileName: fileName,
+            useUniqueFileName: false,
+            folder: "/products"
+          });
           
-          const filePath = path.join(uploadsDir, fileName);
-          fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
-          finalImageUrl = `/uploads/${fileName}`;
+          finalImageUrl = uploadResponse.url;
         }
       } catch (uploadError) {
-        console.error('Error saving updated image:', uploadError);
+        console.error('Error uploading updated image to ImageKit:', uploadError);
       }
     }
 

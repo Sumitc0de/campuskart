@@ -1,4 +1,5 @@
 const { query, dbType } = require('../config/db');
+const imagekit = require('../utils/imagekit');
 
 // @desc    Get all active chats for user
 // @route   GET /api/messages/chats
@@ -93,8 +94,6 @@ exports.sendMessage = async (req, res) => {
     // Handle base64 image data for messages
     if (image_data) {
       try {
-        const fs = require('fs');
-        const path = require('path');
         const crypto = require('crypto');
         
         let base64Data = image_data;
@@ -111,18 +110,17 @@ exports.sendMessage = async (req, res) => {
         if (ext === 'jpeg') ext = 'jpg';
         
         const fileName = `${crypto.randomUUID()}.${ext}`;
-        const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
         
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
+        const uploadResponse = await imagekit.upload({
+          file: base64Data, 
+          fileName: fileName,
+          useUniqueFileName: false,
+          folder: "/messages"
+        });
         
-        const filePath = path.join(uploadsDir, fileName);
-        fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
-        
-        imageUrl = `/uploads/${fileName}`;
+        imageUrl = uploadResponse.url;
       } catch (uploadError) {
-        console.error('Error saving message image:', uploadError);
+        console.error('Error uploading message image to ImageKit:', uploadError);
       }
     }
 

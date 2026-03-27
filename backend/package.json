@@ -7,7 +7,12 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["campuskart", "auth", "jwt", "student-marketplace"],
+  "keywords": [
+    "campuskart",
+    "auth",
+    "jwt",
+    "student-marketplace"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -15,6 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "pg": "^8.12.0"

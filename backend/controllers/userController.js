@@ -1,4 +1,5 @@
 const { query, dbType } = require('../config/db');
+const imagekit = require('../utils/imagekit');
 
 // @desc    Get user profile (by ID)
 // @route   GET /api/users/:id
@@ -48,8 +49,6 @@ exports.updateUserProfile = async (req, res) => {
     // Handle base64 avatar upload
     if (avatar_data && avatar_data.startsWith('data:image')) {
       try {
-        const fs = require('fs');
-        const path = require('path');
         const crypto = require('crypto');
         
         const matches = avatar_data.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
@@ -57,18 +56,18 @@ exports.updateUserProfile = async (req, res) => {
           const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
           const base64Data = matches[2];
           const fileName = `avatar_${crypto.randomUUID()}.${ext}`;
-          const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
           
-          if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-          }
+          const uploadResponse = await imagekit.upload({
+            file: base64Data, 
+            fileName: fileName,
+            useUniqueFileName: false,
+            folder: "/avatars"
+          });
           
-          const filePath = path.join(uploadsDir, fileName);
-          fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
-          finalAvatarUrl = `/uploads/${fileName}`;
+          finalAvatarUrl = uploadResponse.url;
         }
       } catch (uploadError) {
-        console.error('Error saving profile avatar:', uploadError);
+        console.error('Error uploading profile avatar to ImageKit:', uploadError);
       }
     }
 
