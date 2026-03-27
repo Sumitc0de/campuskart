@@ -117,6 +117,7 @@ const SignupScreen = ({ navigation }) => {
                 autoCapitalize="none"
               />
             </View>
+            <Text style={styles.inputHint}>Emails ending in @vcet.edu.in are automatically verified.</Text>
           </View>
 
           {/* Password Input */}
@@ -274,6 +275,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 16,
     height: 52,
+  },
+  inputHint: {
+    fontSize: 10,
+    color: '#4647d3',
+    fontWeight: '600',
+    marginTop: 6,
+    marginLeft: 4,
   },
   inputIcon: { fontSize: 16, marginRight: 10 },
   input: { flex: 1, fontSize: 14, color: '#2c2f31', fontWeight: '500' },

@@ -33,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userName, setUserName] = useState('Alex');
   const [searchQuery, setSearchQuery] = useState('');
-  const [likedItems, setLikedItems] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -78,12 +77,7 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const toggleLike = (itemId) => {
-    setLikedItems((prev) => ({
-      ...prev,
-      [itemId]: !prev[itemId],
-    }));
-  };
+
 
   const filteredProducts = products.filter(item => {
     const matchesFilter = selectedCategory === 'all' || (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
@@ -253,14 +247,6 @@ const HomeScreen = ({ navigation }) => {
                     <Text style={{ fontSize: 30 }}>📦</Text>
                   </View>
                 )}
-                <TouchableOpacity
-                  style={styles.heartButton}
-                  onPress={() => toggleLike(item.id)}
-                >
-                  <Text style={styles.heartIcon}>
-                    {likedItems[item.id] ? '❤️' : '🤍'}
-                  </Text>
-                </TouchableOpacity>
               </View>
               <View style={styles.productBadgeContainer}>
                 <View style={styles.verifiedBadgeSmall}>
@@ -674,20 +660,7 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'contain',
   },
-  heartButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  heartIcon: {
-    fontSize: 16,
-  },
+
   productBadgeContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,

@@ -68,10 +68,12 @@ const SellerProfileScreen = ({ route, navigation }) => {
               source={{ uri: getFullImageUrl(profileData.avatar) || 'https://i.pravatar.cc/150?u=' + profileData.id }} 
               style={styles.avatar} 
             />
-            <View style={styles.verifiedBadge}>
-              <Ionicons name="checkmark" size={10} color="#fff" />
-              <Text style={styles.verifiedText}>VERIFIED</Text>
-            </View>
+            {profileData.is_verified && (
+              <View style={styles.verifiedBadge}>
+                <Ionicons name="checkmark" size={10} color="#fff" />
+                <Text style={styles.verifiedText}>VERIFIED</Text>
+              </View>
+            )}
           </View>
 
           <Text style={styles.userName}>{profileData.name}</Text>

@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   StatusBar,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,6 +36,7 @@ const ListingsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -55,17 +57,24 @@ const ListingsScreen = ({ navigation }) => {
     }
   };
 
-  const fetchListings = async () => {
+  const fetchListings = async (isRefreshing = false) => {
     try {
-      setLoading(true);
+      if (isRefreshing) setRefreshing(true);
+      else setLoading(true);
       const data = await getProducts();
       setListings(data);
     } catch (error) {
       console.error('Error fetching listings:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const onRefresh = useCallback(() => {
+    fetchListings(true);
+    loadUserData();
+  }, []);
 
   const filteredListings = listings.filter(item => {
     const matchesFilter = selectedCategory === 'all' || (item.category && item.category.toLowerCase() === selectedCategory.toLowerCase());
@@ -90,9 +99,11 @@ const ListingsScreen = ({ navigation }) => {
               <Text style={styles.uniHighlight}>VCET</Text>
             </Text>
           </View>
-          <TouchableOpacity style={styles.settingsBtn}>
-            <Ionicons name="settings-outline" size={22} color="#595c5e" />
-          </TouchableOpacity>
+          <View style={styles.headerRightActions}>
+            <TouchableOpacity style={styles.reloadBtn} onPress={() => fetchListings(true)}>
+              <Ionicons name="refresh-outline" size={22} color="#4647d3" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* ─── Search Bar ─── */}
@@ -145,6 +156,14 @@ const ListingsScreen = ({ navigation }) => {
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#4647d3']}
+            tintColor="#4647d3"
+          />
+        }
       >
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Available Listings</Text>
@@ -176,10 +195,7 @@ const ListingsScreen = ({ navigation }) => {
                   <View style={styles.categoryBadge}>
                     <Text style={styles.categoryBadgeText}>{item.category || 'OTHER'}</Text>
                   </View>
-                  <TouchableOpacity style={styles.heartBtnSmall}>
-                     <Ionicons name="heart-outline" size={14} color="#0b0f10" />
-                  </TouchableOpacity>
-                </View>
+                  </View>
 
                 <View style={styles.listingInfo}>
                   <Text style={styles.listingTitle} numberOfLines={1}>{item.title}</Text>
@@ -248,7 +264,12 @@ const styles = StyleSheet.create({
     color: '#4647d3',
     fontWeight: '700',
   },
-  settingsBtn: {
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  reloadBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -370,17 +391,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#4647d3',
   },
-  heartBtnSmall: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   listingInfo: {
     padding: 12,
   },

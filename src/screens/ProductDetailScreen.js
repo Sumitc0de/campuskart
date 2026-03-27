@@ -26,7 +26,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isBidModalVisible, setBidModalVisible] = useState(false);
   const [bidAmount, setBidAmount] = useState('');
   const [highestBid, setHighestBid] = useState(null);
@@ -140,16 +139,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
           <TouchableOpacity style={styles.iconButton} onPress={handleShare}>
             <Ionicons name="share-outline" size={22} color="#0b0f10" />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.iconButton} 
-            onPress={() => setIsFavorite(!isFavorite)}
-          >
-            <Ionicons 
-              name={isFavorite ? "heart" : "heart-outline"} 
-              size={22} 
-              color={isFavorite ? "#ef4444" : "#0b0f10"} 
-            />
-          </TouchableOpacity>
+
         </View>
       </View>
 

@@ -155,10 +155,12 @@ const ProfileScreen = ({ navigation }) => {
               source={{ uri: getFullImageUrl(profileData.avatar) || 'https://i.pravatar.cc/150?u=' + profileData.id }} 
               style={styles.avatar} 
             />
-            <View style={styles.verifiedBadge}>
-              <Ionicons name="checkmark" size={10} color="#fff" />
-              <Text style={styles.verifiedText}>VERIFIED</Text>
-            </View>
+            {profileData.is_verified && (
+              <View style={styles.verifiedBadge}>
+                <Ionicons name="checkmark" size={10} color="#fff" />
+                <Text style={styles.verifiedText}>VERIFIED</Text>
+              </View>
+            )}
           </View>
 
           <Text style={styles.userName}>{profileData.name}</Text>
@@ -199,10 +201,6 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.listingsSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Active Listings</Text>
-            <View style={styles.viewToggles}>
-              <Ionicons name="grid" size={18} color="#4647d3" style={styles.activeToggle} />
-              <Ionicons name="list" size={20} color="#abadaf" />
-            </View>
           </View>
 
           {activeListings.length === 0 ? (
@@ -358,8 +356,6 @@ const styles = StyleSheet.create({
   listingsSection: { backgroundColor: '#ffffff', borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: 10, paddingHorizontal: 24, paddingTop: 30 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   sectionTitle: { fontSize: 20, fontWeight: '800', color: '#0b0f10' },
-  viewToggles: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  activeToggle: { backgroundColor: '#f4f1ff', padding: 4, borderRadius: 6 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   listingCard: { width: (width - 64) / 2, backgroundColor: '#ffffff', borderRadius: 18, marginBottom: 16, overflow: 'hidden', borderWidth: 1, borderColor: '#f8f9fb' },
   imageContainer: { height: 120, backgroundColor: '#f5f7f9', position: 'relative' },

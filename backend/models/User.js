@@ -25,18 +25,18 @@ const User = {
    * @param {string} college
    * @returns {Promise<Object>} Created user info
    */
-  create: async (name, email, hashedPassword, university, department, student_year, batch) => {
+  create: async (name, email, hashedPassword, university, department, student_year, batch, pickup_location, is_verified = false) => {
     let sql;
     if (dbType === 'postgres') {
-      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location, is_verified)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              RETURNING id, name, email, university, department, student_year, batch, pickup_location, is_verified, created_at`;
     } else {
-      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+      sql = `INSERT INTO users (name, email, password, university, department, student_year, batch, pickup_location, is_verified)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     }
 
-    const result = await query(sql, [name, email, hashedPassword, university, department, student_year, batch, pickup_location || 'Campus Main Library']);
+    const result = await query(sql, [name, email, hashedPassword, university, department, student_year, batch, pickup_location || 'Campus Main Library', is_verified]);
 
     if (dbType === 'postgres') {
       return result[0];

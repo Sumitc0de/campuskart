@@ -49,6 +49,9 @@ const register = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
+    // Determine if user is verified based on email domain
+    const isVerified = email.toLowerCase().endsWith('@vcet.edu.in');
+
     // Create the user
     const user = await User.create(
       name, 
@@ -58,7 +61,8 @@ const register = async (req, res) => {
       department || null,
       student_year || null,
       batch || null,
-      pickup_location || 'Campus Main Library'
+      pickup_location || 'Campus Main Library',
+      isVerified
     );
 
     // Generate JWT token
