@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { getProducts, getFullImageUrl } from '../services/api';
 
 const { width } = Dimensions.get('window');
@@ -35,10 +36,12 @@ const ListingsScreen = ({ navigation }) => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadUserData();
-    fetchListings();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadUserData();
+      fetchListings();
+    }, [])
+  );
 
   const loadUserData = async () => {
     try {

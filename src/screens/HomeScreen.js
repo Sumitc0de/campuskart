@@ -10,7 +10,9 @@ import {
   FlatList,
   Dimensions,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -34,6 +36,7 @@ const HomeScreen = ({ navigation }) => {
   const [likedItems, setLikedItems] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [university, setUniversity] = useState('Campus Student');
 
   useFocusEffect(
@@ -43,17 +46,24 @@ const HomeScreen = ({ navigation }) => {
     }, [])
   );
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (isRefreshing = false) => {
     try {
-      setLoading(true);
+      if (isRefreshing) setRefreshing(true);
+      else setLoading(true);
       const data = await getProducts();
       setProducts(data);
     } catch (error) {
       console.error('Error fetching home products:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const onRefresh = useCallback(() => {
+    fetchProducts(true);
+    loadUserData();
+  }, []);
 
   const loadUserData = async () => {
     try {
@@ -93,6 +103,14 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#4647d3']}
+            tintColor="#4647d3"
+          />
+        }
       >
         {/* ─── Top Bar ─── */}
         <View style={styles.topBar}>
@@ -100,6 +118,9 @@ const HomeScreen = ({ navigation }) => {
             Campus<Text style={styles.logoAccent}>Kart</Text>
           </Text>
           <View style={styles.topBarRight}>
+            <TouchableOpacity style={styles.reloadButton} onPress={() => fetchProducts(true)}>
+              <Ionicons name="refresh-outline" size={22} color="#4647d3" />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.notifButton}>
               <Text style={styles.notifIcon}>🔔</Text>
               <View style={styles.notifBadge} />
@@ -368,7 +389,20 @@ const styles = StyleSheet.create({
   topBarRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
+  },
+  reloadButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   notifButton: {
     position: 'relative',

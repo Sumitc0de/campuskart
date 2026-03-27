@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFocusEffect } from '@react-navigation/native';
 import { getProductById, getFullImageUrl, placeBid, getProductBids } from '../services/api';
 
 const { width } = Dimensions.get('window');
@@ -32,9 +33,11 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const [bids, setBids] = useState([]);
   const [submittingBid, setSubmittingBid] = useState(false);
 
-  useEffect(() => {
-    fetchProductDetails();
-  }, [productId]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProductDetails();
+    }, [productId])
+  );
 
   const fetchProductDetails = async () => {
     try {

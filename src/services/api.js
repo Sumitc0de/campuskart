@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ⚠️ Update this to your backend server URL
-const BASE_URL = 'http://10.0.2.2:5000'; // Change to http://localhost:5000 for iOS
+const BASE_URL = 'https://campuskart-loyp.onrender.com'; // Hosted on Render
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -194,7 +194,7 @@ export const getProductBids = async (productId) => {
 
 export const getNotifications = async () => {
   try {
-    const response = await api.get('/api/notifications/'); // Added trailing slash for robustness
+    const response = await api.get('/api/notifications'); // Removed trailing slash for compatibility
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Network error. Please try again.' };
