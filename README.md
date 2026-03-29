@@ -1,317 +1,208 @@
-# 🛒 CampusKart — Student Marketplace
+# CampusKart 🛒
 
-A Gen Z student marketplace mobile app with complete authentication system built using **React Native (Expo)**, **Node.js + Express**, and **MySQL / PostgreSQL**.
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![React Native](https://img.shields.io/badge/React_Native-Expo-02569B?logo=react)
+![NodeJS](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
+![Database](https://img.shields.io/badge/Database-MySQL%20%2F%20Postgres-00758F)
 
-![UI Design](https://stitch.google.com/projects/4717860251787936130)
+## 2. Project Description
+CampusKart is an exclusive, safe, and dynamic university-based student marketplace. Designed to solve the issue of expensive textbooks and dorm essentials, the app allows verified students to seamlessly buy, sell, and bid on second-hand campus items locally, bypassing the noise and risks of public marketplaces.
 
----
+## 3. Features
+- **Exclusive Access:** JWT authentication paired with university-specific email check (`@vcet.edu.in`).
+- **Product Marketplace:** View, search, and list products securely with fully integrated Cloud/ImageKit image hosting.
+- **Real-Time Notifications & Bidding:** Buyers can place bids on active products, triggering notifications directly to seller dashboards.
+- **Integrated Chat System:** Secure peer-to-peer messaging system linked to specific items, facilitating safe price negotiations.
+- **Seller Dashboard:** Robust panel for students to manage their active listings, profile information, and track successfully sold items.
 
-## 📦 Prerequisites
+## 4. Tech Stack
 
-Before you begin, make sure you have the following installed:
+### Frontend
+- **Framework:** React Native (managed by Expo)
+- **Navigation:** React Navigation (Native Stack & Bottom Tabs)
+- **State/Requests:** Axios, React Hooks, Async Storage
+- **Media:** Expo Image Picker
 
-| Tool | Version | Download |
-|------|---------|----------|
-| **Node.js** | v18+ | [nodejs.org](https://nodejs.org/) |
-| **npm** | v9+ | Comes with Node.js |
-| **Expo CLI** | Latest | `npm install -g expo-cli` |
-| **MySQL** | 8.0+ | [mysql.com](https://dev.mysql.com/downloads/) |
-| **PostgreSQL** *(optional)* | 15+ | [postgresql.org](https://www.postgresql.org/download/) |
-| **Android Studio** | Latest | [developer.android.com](https://developer.android.com/studio) |
+### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Security:** bcrypt (Password Hashing), jsonwebtoken (JWT)
+- **Storage:** ImageKit SDK for Media
 
----
+### Database
+- **Primary Database:** Dual-support for PostgreSQL (`pg`) and MySQL (`mysql2`)
+- **Query Method:** Native parameterised SQL queries
 
-## 🗄️ Database Setup
+### Tools / Libraries
+- Cross-Origin Resource Sharing (`cors`)
+- Environment management (`dotenv`)
 
-### Option A: MySQL (Recommended)
+## 5. UI / UX Screenshots & Pages
 
-1. **Install MySQL** from [mysql.com](https://dev.mysql.com/downloads/installer/)
-2. **Open MySQL shell** and run:
+<p align="center">
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203010.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203044.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203100.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203326.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203340.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203349.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203438.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203450.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203458.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203506.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203518.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203531.png" width="200" />
+  <img src="assets/screenshots/Screenshot%202026-03-29%20203605.png" width="200" />
+</p>
 
-```sql
--- Create the database
-CREATE DATABASE campuskart;
+### Pages Overview
+- **Home** – The main discovery feed featuring newly listed electronics, books, and campus essentials.
+- **Login / Signup** – Gatekeeping screens handling JWT authentication and university verification.
+- **Profile / Dashboard** – A user hub to track metrics like active listings, items sold, and manage account details.
+- **Sell Item (Add Product)** – Form screen accepting product details, base64 image encoding, and price metadata.
+- **Listings Screen** – Allows sellers to manage their own products (mark as SOLD, delete, or edit).
+- **Product Detail** – Comprehensive display of the product, including seller badge, description, and dynamic bidding UI.
+- **Chat / Messages** – Dedicated inbox rendering ongoing secure negotiations and real-time message sending.
 
--- Switch to the database
-USE campuskart;
-
--- Create the users table
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  college VARCHAR(200),
-  is_verified BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+## 6. Project Structure
+```text
+project-root
+ ┣ backend
+ ┃ ┣ config
+ ┃ ┣ controllers
+ ┃ ┣ middleware
+ ┃ ┣ models
+ ┃ ┣ routes
+ ┃ ┣ utils
+ ┃ ┣ initDb.js
+ ┃ ┣ server.js
+ ┃ ┗ package.json
+ ┣ src
+ ┃ ┣ components
+ ┃ ┣ screens
+ ┃ ┣ services
+ ┃ ┗ utils
+ ┣ scripts
+ ┣ assets
+ ┣ App.js
+ ┣ app.json
+ ┣ package.json
+ ┗ README.md
 ```
 
-3. **Update** `backend/.env` with your MySQL credentials:
+## 7. Installation Guide
+
+**Step 1: Clone the repository**  
+```bash
+git clone https://github.com/yourusername/campuskart.git
+cd campuskart
+```
+
+**Step 2: Install dependencies**  
+```bash
+# Install frontend dependencies
+npm install
+
+# Install backend dependencies
+cd backend
+npm install
+```
+
+**Step 3: Setup environment variables**  
+For the backend, copy `.env.example` into a `.env` file within the `backend/` directory:
+```bash
+cp .env.example .env
+```
+Fill out the variables as described in the Environment Variables section.
+
+**Step 4: Setup database**  
+Assuming you are running a local MySQL or Postgres server, initialize the tables by strictly running:
+```bash
+node initDb.js
+```
+*(Optionally populate sample items utilizing `node seedData.js`)*
+
+**Step 5: Run backend**  
+```bash
+npm run dev
+# Server runs gracefully at http://localhost:5000 
+```
+
+**Step 6: Run frontend**  
+Open a new terminal session in the project root path.
+```bash
+npm start
+```
+Use the Expo Go app on iOS/Android or the 'w' key to open in a web browser.
+
+## 8. Environment Variables
+
+Your `backend/.env` file requires the following structure:
 ```env
+# Server
+PORT=5000
+
+# Database Type: 'mysql' or 'postgres'
 DB_TYPE=mysql
+
+# Database Connection
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=your_mysql_password
+DB_PASSWORD=your_password_here
 DB_NAME=campuskart
+
+# JWT Auth
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRES_IN=7d
 ```
 
----
+## 9. Database Setup
+Ensure that your relational SQL server is active.
+1. Create a blank database called `campuskart`:
+   ```sql
+   CREATE DATABASE campuskart;
+   ```
+2. Verify that the `.env` credentials match the server.
+3. Automatically execute structure schemas from the backend root:
+   ```bash
+   node initDb.js
+   ```
 
-### Option B: PostgreSQL (Alternative)
+## 10. API Endpoints
 
-1. **Install PostgreSQL** from [postgresql.org](https://www.postgresql.org/download/)
-2. **Open psql shell** and run:
+### Authentication
+- `POST /api/auth/register` – Register account and receive JWT
+- `POST /api/auth/login` – Login to existing account
 
-```sql
--- Create the database
-CREATE DATABASE campuskart;
+### Products
+- `GET /api/products` – Get all available products
+- `GET /api/products/:id` – Fetch product by ID
+- `POST /api/products` – Add a new student listing
+- `PUT /api/products/:id` – Edit listing definition
+- `PATCH /api/products/:id/status` – Update state (Available -> Sold)
+- `DELETE /api/products/:id` – Remove a product listing
 
--- Connect to it
-\c campuskart
+### Bidding & Chat
+- `GET /api/messages/chats` – Retrieve active inbox threads
+- `GET /api/messages/:chatId` – Load chat message history
+- `POST /api/messages` – Send message or initiate new chat thread
+- `POST /api/bids` – Submit a direct bid on an active item
+- `GET /api/bids/:productId` – Fetch total bids for a product
 
--- Create the users table
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  college VARCHAR(200),
-  is_verified BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
+## 11. Future Improvements
+- **Payment Gateway Integration:** Implement secure Stripe/RazorPay escrows to facilitate direct cashless purchases instead of solely cash-on-meet.
+- **Real-Time Websockets:** Transition chat from HTTP polling to a true real-time Socket.io bi-directional connection.
+- **Advanced Filtering/Search:** Implement elastic search for complex queries across descriptions, price bounds, and condition states.
+- **Admin Panel:** Separate dashboard for campus moderators to manage bad actors or reported products.
 
-3. **Update** `backend/.env`:
-```env
-DB_TYPE=postgres
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your_postgres_password
-DB_NAME=campuskart
-```
+## 12. Contributing
+Contributions are warmly welcomed! 
+1. Fork the repository.
+2. Create your Feature Branch (`git checkout -b feature/NewMarketplaceTool`).
+3. Commit your changes (`git commit -m 'Add NewMarketplaceTool'`).
+4. Push to the Branch (`git push origin feature/NewMarketplaceTool`).
+5. Open a logical Pull Request pointing to `main`.
 
----
-
-## ⚙️ Backend Setup
-
-```bash
-# Navigate to backend folder
-cd backend
-
-# Install dependencies
-npm install
-
-# Copy environment template (if you haven't already)
-cp .env.example .env
-
-# Edit .env with your database credentials
-# Then start the server
-npm start
-```
-
-> The server will run on **http://localhost:5000**
-
-### Backend Packages
-| Package | Purpose |
-|---------|---------|
-| `express` | Web framework |
-| `mysql2` | MySQL driver |
-| `pg` | PostgreSQL driver |
-| `bcrypt` | Password hashing |
-| `jsonwebtoken` | JWT auth tokens |
-| `cors` | Cross-origin requests |
-| `dotenv` | Environment variables |
-
----
-
-## 🚀 Frontend Setup
-
-```bash
-# From the project root
-cd Campuskart
-
-# Install dependencies
-npm install
-
-# Start Expo development server
-npx expo start
-```
-
----
-
-## 🔗 Connect Frontend ↔ Backend
-
-Update the `BASE_URL` in `src/services/api.js`:
-
-```javascript
-// For Android Emulator:
-const BASE_URL = 'http://10.0.2.2:5000';
-
-// For physical device (use your computer's IP):
-const BASE_URL = 'http://192.168.1.XXX:5000';
-
-// For iOS Simulator:
-const BASE_URL = 'http://localhost:5000';
-```
-
-> 💡 Find your IP: run `ipconfig` (Windows) or `ifconfig` (Mac/Linux)
-
----
-
-## 📱 Run on Android Emulator
-
-1. **Install Android Studio** → [Download](https://developer.android.com/studio)
-2. Open **Virtual Device Manager** → Create a new device (e.g., Pixel 7)
-3. Start the emulator
-4. In your terminal:
-```bash
-npx expo start
-# Press 'a' to open on Android
-```
-
----
-
-## 📲 Run on Real Device
-
-1. Install **Expo Go** from Play Store / App Store
-2. Start Expo: `npx expo start`
-3. Scan the QR code with Expo Go
-4. Make sure your phone and computer are on the **same Wi-Fi network**
-
----
-
-## 🔌 API Endpoints
-
-### `POST /api/auth/register`
-
-Register a new user account.
-
-**Request Body:**
-```json
-{
-  "name": "Rahul Kumar",
-  "email": "rahul@college.edu",
-  "password": "MySecurePass123",
-  "college": "IIT Delhi"
-}
-```
-
-**Success Response (201):**
-```json
-{
-  "success": true,
-  "message": "Account created successfully! 🎉",
-  "token": "eyJhbGciOiJIUzI1NiIs...",
-  "user": {
-    "id": 1,
-    "name": "Rahul Kumar",
-    "email": "rahul@college.edu",
-    "college": "IIT Delhi",
-    "is_verified": false
-  }
-}
-```
-
----
-
-### `POST /api/auth/login`
-
-Login with existing credentials.
-
-**Request Body:**
-```json
-{
-  "email": "rahul@college.edu",
-  "password": "MySecurePass123"
-}
-```
-
-**Success Response (200):**
-```json
-{
-  "success": true,
-  "message": "Login successful! 🎉",
-  "token": "eyJhbGciOiJIUzI1NiIs...",
-  "user": {
-    "id": 1,
-    "name": "Rahul Kumar",
-    "email": "rahul@college.edu",
-    "college": "IIT Delhi",
-    "is_verified": false
-  }
-}
-```
-
----
-
-## 📁 Project Structure
-
-```
-Campuskart/
-├── App.js                          # App entry point
-├── src/
-│   ├── screens/
-│   │   ├── LoginScreen.js          # Login UI
-│   │   └── SignupScreen.js         # Signup UI
-│   ├── navigation/
-│   │   └── AppNavigator.js         # React Navigation stack
-│   └── services/
-│       └── api.js                  # Axios API layer
-├── backend/
-│   ├── server.js                   # Express server
-│   ├── config/
-│   │   └── db.js                   # MySQL/PostgreSQL config
-│   ├── controllers/
-│   │   └── authController.js       # Register & Login logic
-│   ├── routes/
-│   │   └── authRoutes.js           # Auth API routes
-│   ├── models/
-│   │   └── User.js                 # User database model
-│   ├── middleware/
-│   │   └── authMiddleware.js       # JWT verification
-│   ├── .env                        # Environment variables
-│   └── .env.example                # Env template
-├── package.json                    # Frontend dependencies
-└── README.md                       # This file
-```
-
----
-
-## 🔐 Security Features
-
-- ✅ **Password Hashing** — bcrypt with 12 salt rounds
-- ✅ **JWT Tokens** — Signed with secret key, 7-day expiry
-- ✅ **Input Validation** — Email format, password length checks
-- ✅ **Error Handling** — Secure error messages (no sensitive data leaks)
-- ✅ **CORS Protection** — Configurable cross-origin policy
-- ✅ **Auth Middleware** — Ready for protecting future routes
-
----
-
-## 🧠 Notes
-
-- This is an **MVP authentication system** for CampusKart
-- **Next steps**: Product listings, chat system, payment integration
-- UI follows the **"CampusKart Vibe"** design system (Plus Jakarta Sans + indigo/pink palette)
-- Designed by **Stitch MCP** design tool
-
----
-
-## 🎨 Design System — CampusKart Vibe
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| Primary | `#6366F1` / `#4647d3` | Buttons, links, accents |
-| Secondary | `#EC4899` / `#b00d6a` | Brand accent, urgency |
-| Background | `#F8FAFC` / `#f5f7f9` | Screen backgrounds |
-| Surface | `#ffffff` | Cards, form containers |
-| On Surface | `#2c2f31` | Primary text |
-| Outline | `#595c5e` | Labels, secondary text |
-| Success | `#22C55E` | Verification badges |
-
----
-
-**Built with ❤️ for students, by students.**
+## 13. License
+This project is licensed under the MIT License - see the LICENSE file for details.
